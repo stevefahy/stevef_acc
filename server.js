@@ -10,7 +10,27 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 
 // configuration ===============================================================
-mongoose.connect(database.remoteUrl); 	// Connect to local MongoDB instance. A remoteUrl is also available (modulus.io)
+var os = require('os');
+var interfaces = os.networkInterfaces();
+var addresses = [];
+for (var k in interfaces) {
+    for (var k2 in interfaces[k]) {
+        var address = interfaces[k][k2];
+        if (address.family === 'IPv4' && !address.internal) {
+            addresses.push(address.address);
+        }
+    }
+}
+console.log(addresses);
+if(addresses == '192.168.192.54'){
+	console.log('local');
+	var dburl = database.localUrl;
+
+} else {
+	console.log('remote');
+	var dburl = database.remoteUrl;
+}
+mongoose.connect(dburl); 	// Connect to local MongoDB instance. A remoteUrl is also available (modulus.io)
 //mongoose.connect(process.env.MONGODB_URI2);
 //mongoose.connect(process.env.MONGODB_URI2);
 
