@@ -2,8 +2,7 @@
 var express = require('express');
 var app = express(); 						// create our app w/ express
 var mongoose = require('mongoose'); 				// mongoose for mongodb
-//var port = process.env.PORT || 8080; 				// set the port
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8080; 				// set the port
 var database = require('./configs/database'); 			// load the database config
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -21,18 +20,12 @@ for (var k in interfaces) {
         }
     }
 }
-console.log(addresses);
 if(addresses == '192.168.192.54'){
-	console.log('local');
 	var dburl = database.localUrl;
-
 } else {
-	console.log('remote');
 	var dburl = database.remoteUrl;
 }
 mongoose.connect(dburl); 	// Connect to local MongoDB instance. A remoteUrl is also available (modulus.io)
-//mongoose.connect(process.env.MONGODB_URI2);
-//mongoose.connect(process.env.MONGODB_URI2);
 
 app.use(express.static('./public')); 		// set the static files location /public/img will be /img for users
 app.use(morgan('dev')); // log every request to the console
