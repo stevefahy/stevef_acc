@@ -20,7 +20,6 @@
     body {
         padding-top: 0px;
     }
-
     
     #todo-list {
         margin-bottom: 30px;
@@ -42,43 +41,18 @@
 </head>
 <!-- SET THE CONTROLLER -->
 
-<body ng-controller="mainController">
+<body>
     <div class="container">
         <!-- HEADER AND TODO COUNT -->
         <div class="text-center">
-            <h1>A/C <span class="label label-info">{{ todos.length }}</span></h1>
+            <h1>A/C</h1>
         </div>
-        <!-- TODO LIST -->
-        <div id="todo-list" class="row">
-            <div class="col-sm-4 col-sm-offset-4">
-                <!-- LOOP OVER THE TODOS IN $scope.todos -->
-                <div class="checkbox" ng-repeat="todo in todos">
-                    <form>
-                        <input type="text" ng-model="todo.text">
-                        <input type="checkbox" ng-click="deleteTodo(todo._id)"></input>
-                        <button type="submit" class="btn btn-primary btn-md" ng-click="updateTodo(todo._id, todo.text)">Update</button>
-                        <label>{{todo.updatedAt}} mins: {{elapsedMinutes(todo.createdAt, todo.updatedAt)}}</label>
-                    </form>
-                </div>
-                <p class="text-center" ng-show="loading">
-                    <span class="fa fa-spinner fa-spin fa-3x"></span>
-                </p>
-            </div>
-        </div>
-        <!-- FORM TO CREATE TODOS -->
-        <div id="todo-form" class="row">
-            <div class="col-sm-8 col-sm-offset-2 text-center">
-                <form>
-                    <div class="form-group">
-                        <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                        <input type="text" class="form-control input-lg text-center" placeholder="" ng-model="formData.text">
-                    </div>
-                    <!-- createToDo() WILL CREATE NEW TODOS -->
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
-                </form>
-            </div>
-        </div>
-        <div ng-controller="cgtController">
+        <!-- Include template -->
+        <div ng-include src="'account.html'"></div>
+        
+    </div>
+    <br>
+    <div ng-controller="cgtController">
         <!-- CGT LIST -->
         <div id="todo-list" class="row">
             <div class="col-sm-4 col-sm-offset-4">
@@ -96,16 +70,15 @@
                 </p>
             </div>
         </div>
-        
-            <form>
-                <div class="form-group">
-                    <label ng-model='text.message'>{{text.message}}</label>
-                    <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                    <input type="text" class="form-control input-lg text-center" placeholder="" ng-model="formData2.text">
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createCgt()">Add</button>
-                </div>
-            </form>
-        </div>
+        <form>
+            <div class="form-group">
+                <label ng-model='text.message'>{{text.message}}</label>
+                <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
+                <input type="text" class="form-control input-lg text-center" placeholder="" ng-model="formData2.text">
+                <button type="submit" class="btn btn-primary btn-lg" ng-click="createCgt()">Add</button>
+            </div>
+        </form>
+    </div>
     </div>
 </body>
 

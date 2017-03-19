@@ -1,0 +1,61 @@
+<div ng-controller="accountController">
+            <p>Account</p>
+            <div class="checkbox" ng-repeat="account in accounts">
+                <form>
+                    id:
+                    <label>{{account._id}}</label>
+                    <br>
+                    <div ng-repeat="i in account.account_obj">
+                        ID:
+                        <label>{{i._id}}</label>
+                        <br>Name:
+                        <input type="text" ng-model="i.name">
+                        <br> Current balance:
+                        <input type="text" ng-model="i.balance">
+                        <br> Interest rules:
+                        <input type="text" ng-model="i.rules">
+                        <br> Commencement Date:
+                        <label>{{i.date}}</label>
+                        <input type="date" ng-model="i.date">
+                        <input type="checkbox" ng-click="deleteContent(account._id,i._id)"></input>
+                        <br></br>
+                    </div>
+                    <input type="checkbox" ng-click="deleteAccount(account._id)"></input>
+                    <button type="submit" class="btn btn-primary btn-md" ng-click="updateAccount(account._id, account)">Update</button>
+                </form>
+                <br>
+                <p>Sub Account add</p>
+                <form>
+                    Name:
+                    <input type="text" ng-model="account_obj.name">
+                    <!--<input type="text" ng-model="account.account_obj.name">-->
+                    <br> Current balance:
+                    <input type="text" ng-model="account_obj.balance">
+                    <br> Interest rules:
+                    <input type="text" ng-model="account_obj.rules">
+                    <br> Commencement Date:
+                    <!--<input type="date" value={{account_obj.date}}>-->
+                    <input type="date" ng-model="account_obj.date">
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-md" ng-click="addAccount(account._id, account)">Add</button>
+                </form>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
+            <p>Account create</p>
+            <form>
+                Name:
+                <input type="text" ng-model="account_obj.name">
+                <br> Current balance:
+                <input type="text" ng-model="account_obj.balance">
+                <br> Interest rules:
+                <input type="text" ng-model="account_obj.rules">
+                <br> Commencement Date:
+                <input type="date" value={{account_obj.date}}>
+                <br>
+                <button type="submit" class="btn btn-primary btn-md" ng-click="createAccount()">Create</button>
+            </form>
+        </div>

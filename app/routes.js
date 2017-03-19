@@ -1,18 +1,8 @@
-var Todo = require('./models/todo');
-var Cgt =  require('./models/cgt');
-
-function getTodos(res) {
-    Todo.find(function (err, todos) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err) {
-            res.send(err);
-        }
-        res.json(todos); // return all todos in JSON format
-    });
-}
+var Cgt = require('./models/cgt');
+var Account = require('./models/account');
 
 function getCgts(res) {
-    Cgt.find(function (err, cgts) {
+    Cgt.find(function(err, cgts) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
             res.send(err);
@@ -21,128 +11,153 @@ function getCgts(res) {
     });
 }
 
-module.exports = function (app) {
+function getAccounts(res) {
+    Account.find(function(err, accounts) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err) {
+            res.send(err);
+        }
+        res.json(accounts); // return all todos in JSON format
+    });
+}
 
+
+module.exports = function(app) {
     // api ---------------------------------------------------------------------
+    // ACCOUNTS
+    // get all accounts
+    app.get('/api/accounts', function(req, res) {
+        // use mongoose to get all todos in the database
+        getAccounts(res);
+    });
+    // create cgt and send back all cgts after creation
+    app.post('/api/accounts', function(req, res) {
+        // create a todo, information comes from AJAX request from Angular
+        Account.create({
+            account_obj: req.body,
+            done: false
+        }, function(err, account) {
+            if (err)
+                res.send(err);
+            // get and return all the todos after you create another
+            getAccounts(res);
+        });
+    });
 
+    formatDate = function(x) {
+        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
+        return formattedDate;
+    };
+
+    // update a todo
+    app.put('/api/accounts/:account_id', function(req, res) {
+        Account.findById({ _id: req.params.account_id }, function(err, account) {
+            if (err) {
+                console.log('error');
+                res.send(err);
+            }
+            var toupdate;
+            if (req.body.account_obj.length === undefined) {
+                toupdate = req.body.account_obj.account_obj;
+            } else {
+                toupdate = req.body.account_obj;
+            }
+            if (account.account_obj.length < req.body.account_obj.length) {
+
+                account.account_obj.push({ name: '', balance: '', rules: '', date: '' });
+            }
+            for (var i = 0, l = account.account_obj.length; i < l; i++) {
+                account.account_obj[i].name = toupdate[i].name;
+                account.account_obj[i].balance = toupdate[i].balance;
+                account.account_obj[i].rules = toupdate[i].rules;
+                account.account_obj[i].date = toupdate[i].date;
+            }
+            var test4 = new Account(account);
+            test4.save(function(err, account) {
+                if (err)
+                    res.send(err);
+                getAccounts(res);
+            });
+
+        });
+    });
+    // delete a account
+    app.delete('/api/accounts/:account_id', function(req, res) {
+        Account.remove({
+            _id: req.params.account_id
+        }, function(err, account) {
+            if (err)
+                res.send(err);
+            getAccounts(res);
+        });
+    });
+    // delete sub account
+    app.post('/api/accounts/:id/:contentId', function(req, res) {
+        var id = req.params.id; // not req.body._id
+        var contentId = req.params.contentId; // not req.body._id
+        Account.findByIdAndUpdate(id, {
+            $pull: {
+                account_obj: {
+                    _id: contentId //_eventId is string representation of event ID
+                }
+            }
+        }, function(err, account) {
+            if (err) {
+                console.log('ERROR: ' + err);
+            } else {
+                getAccounts(res);
+            }
+        });
+    });
     // CGTS
-
     // get all cgts
-    app.get('/api/cgts', function (req, res) {
+    app.get('/api/cgts', function(req, res) {
         // use mongoose to get all todos in the database
         getCgts(res);
     });
     // create cgt and send back all cgts after creation
-    app.post('/api/cgts', function (req, res) {
+    app.post('/api/cgts', function(req, res) {
         // create a todo, information comes from AJAX request from Angular
         Cgt.create({
             text: req.body.text,
             done: false
-        }, function (err, todo) {
+        }, function(err, todo) {
             if (err)
                 res.send(err);
             // get and return all the todos after you create another
             getCgts(res);
         });
-
     });
-
     // update a cgt
-    app.put('/api/cgts/:cgt_id', function (req, res) {
-        console.log('post: id: ' +  req.params.cgt_id + ', text: ' + req.body.text);
-        Cgt.findById({_id:req.params.cgt_id}, function(err, cgt) {
-            console.log('find id: ' + req.params.cgt_id + ', replace with: ' + req.body.text);
-            if (err){
+    app.put('/api/cgts/:cgt_id', function(req, res) {
+        Cgt.findById({ _id: req.params.cgt_id }, function(err, cgt) {
+            if (err) {
                 console.log('error');
                 res.send(err);
             }
-            console.log('found: ' + cgt);
             cgt.text = req.body.text;
-            console.log('update: ' + cgt);
-            
             var test2 = new Cgt(cgt);
-            test2.save(function (err, cgt) {
-                if (err) 
+            test2.save(function(err, cgt) {
+                if (err)
                     res.send(err);
                 getCgts(res);
             });
         });
     });
-
     // delete a cgt
-    app.delete('/api/cgts/:cgt_id', function (req, res) {
-        console.log('remove: ' + req.params.cgt_id);
+    app.delete('/api/cgts/:cgt_id', function(req, res) {
         Cgt.remove({
             _id: req.params.cgt_id
-        }, function (err, cgt) {
+        }, function(err, cgt) {
             if (err)
                 res.send(err);
 
             getCgts(res);
         });
     });
-    // TODOS
-
-    // get all todos
-    app.get('/api/todos', function (req, res) {
-        // use mongoose to get all todos in the database
-        getTodos(res);
-    });
-
-    // create todo and send back all todos after creation
-    app.post('/api/todos', function (req, res) {
-        // create a todo, information comes from AJAX request from Angular
-        Todo.create({
-            text: req.body.text,
-            done: false
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
-            // get and return all the todos after you create another
-            getTodos(res);
-        });
-
-    });
-
-    // update a todo
-    app.put('/api/todos/:todo_id', function (req, res) {
-        console.log('post: id: ' +  req.params.todo_id + ', text: ' + req.body.text);
-        Todo.findById({_id:req.params.todo_id}, function(err, todo) {
-            console.log('find id: ' + req.params.todo_id + ', replace with: ' + req.body.text);
-            if (err){
-                console.log('error');
-                res.send(err);
-            }
-            console.log('found: ' + todo);
-            todo.text = req.body.text;
-            console.log('update: ' + todo);
-            
-            var test = new Todo(todo);
-            test.save(function (err, todo) {
-                if (err) 
-                    res.send(err);
-                getTodos(res);
-            });
-        });
-    });
-    
-
-    // delete a todo
-    app.delete('/api/todos/:todo_id', function (req, res) {
-        console.log('remove: ' + req.params.todo_id);
-        Todo.remove({
-            _id: req.params.todo_id
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
-
-            getTodos(res);
-        });
-    });
-
 
     // application -------------------------------------------------------------
-    app.get('*', function (req, res) {
+    app.get('*', function(req, res) {
         res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 };
