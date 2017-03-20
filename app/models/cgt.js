@@ -2,10 +2,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var cgtSchema = new Schema({
-  text: {
-        type: String,
-        default: ''
-    },
+  cgt_obj: [{
+    rate: Number,
+    startdate: Date,
+    enddate: Date
+  }],
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now}
 });

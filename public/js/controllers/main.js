@@ -132,7 +132,20 @@ var accountController = angular.module('accountController', [])
 
 
 var cgtConroller = angular.module('cgtController', [])
-	.controller('cgtController', ['$scope', '$http', 'Cgts', function ($scope, $http, Cgts) {
+	.controller('cgtController', ['$scope', '$http', '$filter', 'Cgts', function ($scope, $http, $filter, Cgts) {
+	
+	$scope.formatDate = function(x) {
+    	var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
+    	return formattedDate;
+   	};
+
+	$scope.cgt_obj = {
+        rate: 0,
+		startdate: $filter("date")(Date.now(), 'yyyy-MM-dd'),
+		enddate: $filter("date")(Date.now(), 'yyyy-MM-dd'),
+	 };
+
+
 		// GET =====================================================================
 		// when landing on the page, get all cgts and show them
 		// use the service to get all the todos
@@ -146,25 +159,44 @@ var cgtConroller = angular.module('cgtController', [])
 		$scope.createCgt = function() {
 			// validate the formData to make sure that something is there
 			// if form is empty, nothing will happen
-			if ($scope.formData2.text !== undefined) {
+			if ($scope.cgt_obj.rate !== undefined) {
 				$scope.loading = true;
-				// call the create function from our service (returns a promise object)
-				Cgts.create($scope.formData2)
+				// call the create function from our service (returns a promise object);
+				Cgts.create($scope.cgt_obj)
 					// if successful creation, call our get function to get all the new todos
 					.success(function(data) {
 						$scope.loading = false;
-						$scope.formData2 = {}; // clear the form so our user is ready to enter another
 						$scope.cgts = data; // assign our new list of todos
 					});
 			}
 		};
 		// UPDATE ==================================================================
 		// when submitting the update form, send the text to the node API
-		$scope.updateCgt = function(id, text) {
-			var pms = {'id':id,'text':text};
+		$scope.updateCgt = function(id, cgt_obj) {
+			var pms = {'id':id,'cgt_obj':cgt_obj};
 			// validate the text to make sure that something is there
 			// if text is empty, nothing will happen
-			if (text !== undefined) {
+			if (cgt_obj !== undefined) {
+				$scope.loading = true;
+				// call the create function from our service (returns a promise object)
+				Cgts.update(pms)
+					// if successful creation, call our get function to get all the new todos
+					.success(function(data) {
+						$scope.loading = false;
+						$scope.cgts = data; // assign our new list of todos
+					});
+			}
+		};
+		// ADD =====================================================================
+		$scope.addCgt = function(id,cgt) {
+			var pms = {'id':id, 'cgt_obj': $scope.cgt_obj};
+			pms.cgt_obj.startdate = new Date(pms.cgt_obj.startdate).toISOString();
+			pms.cgt_obj.enddate = new Date(pms.cgt_obj.enddate).toISOString();
+			var newcgt = cgt.cgt_obj.push(pms.cgt_obj);
+			pms = {'id':id, 'cgt_obj': cgt.cgt_obj};
+			// validate the text to make sure that something is there
+			// if text is empty, nothing will happen
+			if (cgt.cgt_obj !== undefined) {
 				$scope.loading = true;
 				// call the create function from our service (returns a promise object)
 				Cgts.update(pms)
@@ -182,6 +214,15 @@ var cgtConroller = angular.module('cgtController', [])
 			Cgts.delete(id)
 				// if successful creation, call our get function to get all the new todos
 				.success(function(data) {
+					$scope.loading = false;
+					$scope.cgts = data; // assign our new list of todos
+				});
+		};
+		// DELETE SUB CGT =======================================================
+		$scope.deleteContent = function(id,contentId) {
+		    Cgts.deleteContent(id,contentId)
+		    	// if successful creation, call our get function to get all the new todos
+		    	.success(function(data) {
 					$scope.loading = false;
 					$scope.cgts = data; // assign our new list of todos
 				});

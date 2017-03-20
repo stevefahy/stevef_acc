@@ -10,14 +10,15 @@ angular.module('cgtService', [])
 				return $http.post('/api/cgts', cgtData);
 			},
 			delete : function(id) {
-				console.log('cgts delete id: ' + id);
 				return $http.delete('/api/cgts/' + id);
 			},
 			update : function(pms){
-				console.log('cgts update id: ' + pms.id + ', text: ' + pms.text);
 				var theurl = '/api/cgts/'+pms.id;	
 				return $http.put(theurl, pms);
-			}
+			},
+			deleteContent: function(id,contentId) {    
+        		return $http.post('/api/cgts/'+ id + '/' + contentId);
+       		}
 		};
 	}]);
 

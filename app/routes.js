@@ -119,15 +119,22 @@ module.exports = function(app) {
     app.post('/api/cgts', function(req, res) {
         // create a todo, information comes from AJAX request from Angular
         Cgt.create({
-            text: req.body.text,
+            cgt_obj: req.body,
             done: false
-        }, function(err, todo) {
+        }, function(err, cgt) {
             if (err)
                 res.send(err);
             // get and return all the todos after you create another
             getCgts(res);
         });
     });
+
+
+    formatDate = function(x) {
+        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
+        return formattedDate;
+    };
+
     // update a cgt
     app.put('/api/cgts/:cgt_id', function(req, res) {
         Cgt.findById({ _id: req.params.cgt_id }, function(err, cgt) {
@@ -135,15 +142,31 @@ module.exports = function(app) {
                 console.log('error');
                 res.send(err);
             }
-            cgt.text = req.body.text;
-            var test2 = new Cgt(cgt);
-            test2.save(function(err, cgt) {
+            var toupdate;
+            if (req.body.cgt_obj.length === undefined) {
+                toupdate = req.body.cgt_obj.cgt_obj;
+            } else {
+                toupdate = req.body.cgt_obj;
+            }
+            if (cgt.cgt_obj.length < req.body.cgt_obj.length) {
+                cgt.cgt_obj.push({ rate: '', startdate: '', enddate: ''});
+            }
+            for (var i = 0, l = cgt.cgt_obj.length; i < l; i++) {
+                cgt.cgt_obj[i].rate = toupdate[i].rate;
+                cgt.cgt_obj[i].startdate = toupdate[i].startdate;
+                cgt.cgt_obj[i].enddate = toupdate[i].enddate;
+
+            }
+            var test6 = new Cgt(cgt);
+            test6.save(function(err, cgt) {
                 if (err)
                     res.send(err);
                 getCgts(res);
             });
+
         });
     });
+
     // delete a cgt
     app.delete('/api/cgts/:cgt_id', function(req, res) {
         Cgt.remove({
@@ -151,8 +174,25 @@ module.exports = function(app) {
         }, function(err, cgt) {
             if (err)
                 res.send(err);
-
             getCgts(res);
+        });
+    });
+    // delete sub cgt
+    app.post('/api/cgts/:id/:contentId', function(req, res) {
+        var id = req.params.id; // not req.body._id
+        var contentId = req.params.contentId; // not req.body._id
+        Cgt.findByIdAndUpdate(id, {
+            $pull: {
+                cgt_obj: {
+                    _id: contentId //_eventId is string representation of event ID
+                }
+            }
+        }, function(err, cgt) {
+            if (err) {
+                console.log('ERROR: ' + err);
+            } else {
+                getCgts(res);
+            }
         });
     });
 

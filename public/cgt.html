@@ -1,0 +1,52 @@
+<div ng-controller="cgtController">
+    <!-- CGT LIST -->
+    <p>CGT</p>
+    <!-- LOOP OVER THE TODOS IN $scope.todos -->
+    <div class="checkbox" ng-repeat="cgt in cgts">
+        <form>
+            <div ng-repeat="i in cgt.cgt_obj">
+                Rate:
+                <input type="number" ng-model="i.rate">
+                <br> Start Date:
+                <label>{{i.startdate}}</label>
+                <input type="date" ng-model="i.startdate">
+                <br> End Date:
+                <label>{{i.enddate}}</label>
+                <input type="date" ng-model="i.enddate">
+                <input type="checkbox" ng-click="deleteContent(cgt._id,i._id)"></input>
+            </div>
+            <input type="checkbox" ng-click="deleteCgt(cgt._id)"></input>
+            <button type="submit" class="btn btn-primary btn-md" ng-click="updateCgt(cgt._id, cgt)">Update</button>
+        </form>
+        <p class="text-center" ng-show="loading">
+            <span class="fa fa-spinner fa-spin fa-3x"></span>
+        </p>
+        <br>
+        <p>Sub CGT add</p>
+        <form>
+            Rate:
+            <input type="number" ng-model="cgt_obj.rate">
+            <br> Start Date:
+            <input type="date" ng-model="cgt_obj.startdate">
+            <br> End Date:
+            <input type="date" ng-model="cgt_obj.enddate">
+            <br>
+            <button type="submit" class="btn btn-primary btn-md" ng-click="addCgt(cgt._id, cgt)">Add</button>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <p>Cgt create</p>
+    <form>
+        Rate:
+        <input type="number" ng-model="cgt_obj.rate">
+        <br> Start date:
+        <input type="date" ng-model="cgt_obj.startdate">
+        <br> End date:
+        <input type="date" ng-model="cgt_obj.enddate">
+        <button type="submit" class="btn btn-primary btn-md" ng-click="createCgt()">Create</button>
+    </form>
+</div>
