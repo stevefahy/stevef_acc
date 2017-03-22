@@ -5,8 +5,9 @@ var accountSchema = new Schema({
   account_obj: [{
     name: String,
     balance: Number,
-    rules: String,
-    date: Date
+    rules: [{percent: Number, rule: String, amount: Number}],
+    startdate: Date,
+    enddate: Date
   }],
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now}

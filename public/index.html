@@ -1,15 +1,18 @@
 <!doctype html>
 <!-- ASSIGN OUR ANGULAR MODULE -->
-<html ng-app="scotchTodo">
+<html ng-app="accountPage">
 
 <head>
     <!-- META -->
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Optimize mobile viewport -->
-    <title>Node/Angular Todo App</title>
+    <title>Account</title>
     <!-- SCROLLS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <!-- load bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <style>
@@ -18,16 +21,51 @@
     }
     
     body {
-        padding-top: 0px;
+        padding-top: 70px;
+        padding-bottom: 30px;
     }
     
-    #todo-list {
-        margin-bottom: 30px;
+    .input-group-addon {
+        min-width: 110px;
+        text-align: left;
     }
     
-    #todo-form {
+    .input-group {
+        width: 100%;
+    }
+    
+    .btn-pair-right {
+        margin-left: 5px;
+    }
+    
+    .btn {
+        margin-top: 7px;
+        margin-bottom: 7px;
+    }
+    .input-group-btn .btn{
+        margin-top:  0px;
         margin-bottom: 0px;
     }
+    
+    .panel-heading.dark-green {
+        background-image: linear-gradient(to bottom, #6abe6a 0, #419441 100%);
+    }
+    
+    .panel-heading.dark-green .panel-title {
+        color: #FFFFFF;
+    }
+    
+    .subpanel .input-group {
+        max-width: 90%;
+    }
+    
+    input.form-control.form-control-inline.ng-pristine.ng-valid {
+        max-width: 83%;
+    }
+    .form-control.sidebyside{
+        width: 33%;
+    }
+
     </style>
     <!-- SPELLS -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
@@ -35,24 +73,28 @@
     <script src="js/controllers/main.js"></script>
     <!-- load up our controller -->
     <script src="js/services/todos.js"></script>
-    <!-- load our todo service -->
+    <!-- load our service -->
     <script src="js/core.js"></script>
     <!-- load our main application -->
 </head>
-<!-- SET THE CONTROLLER -->
 
 <body>
-    <div class="container">
-        <!-- HEADER AND TODO COUNT -->
-        <div class="text-center">
-            <h1>A/C</h1>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand">Acc</a>
+            </div>
         </div>
+    </nav>
+    <div class="container theme-showcase" role="main">
+        <div class="jumbotron">
+            <!-- Include template -->
+            <div ng-include src="'account.html'"></div>
+        </div>
+        <br>
         <!-- Include template -->
-        <div ng-include src="'account.html'"></div>
+        <div ng-include src="'cgt.html'"></div>
     </div>
-    <br>
-    <!-- Include template -->
-    <div ng-include src="'cgt.html'"></div>
 </body>
 
 </html>

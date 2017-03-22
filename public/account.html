@@ -1,59 +1,129 @@
 <div ng-controller="accountController">
-    <p>Account</p>
-    <div class="checkbox" ng-repeat="account in accounts">
-        <form>
-            id:
-            <label>{{account._id}}</label>
-            <br>
-            <div ng-repeat="i in account.account_obj">
-                ID:
-                <label>{{i._id}}</label>
-                <br>Name:
-                <input type="text" ng-model="i.name">
-                <br> Current balance:
-                <input type="text" ng-model="i.balance">
-                <br> Interest rules:
-                <input type="text" ng-model="i.rules">
-                <br> Commencement Date:
-                <label>{{i.date}}</label>
-                <input type="date" ng-model="i.date">
-                <input type="checkbox" ng-click="deleteContent(account._id,i._id)"></input>
-                <br></br>
+    <div ng-repeat="account in accounts">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Account</h3>
             </div>
-            <input type="checkbox" ng-click="deleteAccount(account._id)"></input>
-            <button type="submit" class="btn btn-primary btn-md" ng-click="updateAccount(account._id, account)">Update</button>
-        </form>
-        <br>
-        <p>Sub Account add</p>
-        <form>
-            Name:
-            <input type="text" ng-model="account_obj.name">
-            <br> Current balance:
-            <input type="text" ng-model="account_obj.balance">
-            <br> Interest rules:
-            <input type="text" ng-model="account_obj.rules">
-            <br> Commencement Date:
-            <input type="date" ng-model="account_obj.date">
-            <br>
-            <button type="submit" class="btn btn-primary btn-md" ng-click="addAccount(account._id, account)">Add</button>
-        </form>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="input-group">
+                        <div ng-repeat="i in account.account_obj">
+                            <div class="input-group">
+                                <span class="input-group-addon">Name</span>
+                                <input class="form-control" type="text" ng-model="i.name">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Balance</span>
+                                <input class="form-control" type="text" ng-model="i.balance">
+                            </div>
+                            <div ng-repeat="j in i.rules">
+                                <div class="input-group">
+                                    <span class="input-group-addon">Interest rules</span>
+                                    <input class="form-control" type="text" value={{j.percent}}{{j.rule}}{{j.amount}}>
+                                    <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="deleteRule(account._id,i._id,account,j._id)"><span class="glyphicon glyphicon-minus-sign"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].percent">
+                                <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].rule">
+                                <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].amount">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="addRule(account._id,i._id,account,account_obj.rules[0])"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                </span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Start Date</span>
+                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.startdate)}} disabled>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Start Date</span>
+                                <input class="form-control" type="date" ng-model="i.startdate">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">End Date</span>
+                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.enddate)}} disabled>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">End Date</span>
+                                <input class="form-control" type="date" ng-model="i.enddate">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-warning" ng-click="deleteContent(account._id,i._id)">Delete</button>
+                        </div>
+                        <button type="submit" class="btn btn-danger" ng-click="deleteAccount(account._id)">Delete</button>
+                        <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateAccount(account._id, account)">Update</button>
+                    </div>
+                </form>
+                <div class="panel panel-success subpanel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Sub Account add</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">Name</span>
+                                    <input class="form-control" type="text" ng-model="account_obj.name">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Balance</span>
+                                    <input class="form-control" type="text" ng-model="account_obj.balance">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Interest rules</span>
+                                    <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].percent">
+                                    <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].rule">
+                                    <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].amount">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Start Date</span>
+                                    <input class="form-control form-control-inline" type="date" ng-model="account_obj.startdate">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">End Date</span>
+                                    <input class="form-control form-control-inline" type="date" ng-model="account_obj.enddate">
+                                </div>
+                                <button type="submit" class="btn btn btn-success" ng-click="addAccount(account._id, account)">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <p>Account create</p>
-    <form>
-        Name:
-        <input type="text" ng-model="account_obj.name">
-        <br> Current balance:
-        <input type="text" ng-model="account_obj.balance">
-        <br> Interest rules:
-        <input type="text" ng-model="account_obj.rules">
-        <br> Commencement Date:
-        <input type="date" ng-model="account_obj.date">
-        <br>
-        <button type="submit" class="btn btn-primary btn-md" ng-click="createAccount()">Create</button>
-    </form>
+    <div class="panel panel-success">
+        <div class="panel-heading dark-green">
+            <h4 class="panel-title">Account create</h4>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="input-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Name</span>
+                        <input class="form-control" type="text" ng-model="account_obj.name">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Balance</span>
+                        <input class="form-control" type="text" ng-model="account_obj.balance">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Interest rules</span>
+                        <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].percent">
+                        <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].rule">
+                        <input class="form-control sidebyside" type="text" ng-model="account_obj.rules[0].amount">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Start Date</span>
+                        <input class="form-control" type="date" ng-model="account_obj.startdate">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">End Date</span>
+                        <input class="form-control" type="date" ng-model="account_obj.enddate">
+                    </div>
+                    <button type="submit" class="btn btn-success" ng-click="createAccount()">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

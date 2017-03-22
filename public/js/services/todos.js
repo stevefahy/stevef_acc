@@ -42,6 +42,14 @@ angular.module('accountService', [])
 			},
 			deleteContent: function(id,contentId) {    
         		return $http.post('/api/accounts/'+ id + '/' + contentId);
+       		},
+			addRule: function(pms) {
+				var theurl = '/api/accounts/'+pms.id+'/'+pms.contentId;
+        		return $http.put(theurl, pms);
+       		},
+       		deleteRule: function(pms) {
+				var theurl = '/api/accounts/delete/'+pms.id+'/'+pms.contentId;
+        		return $http.post(theurl, pms);
        		}
 		};
 	}]);

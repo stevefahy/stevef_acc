@@ -1,8 +1,8 @@
 <div ng-controller="cgtController">
     <!-- CGT LIST -->
     <p>CGT</p>
-    <!-- LOOP OVER THE TODOS IN $scope.todos -->
-    <div class="checkbox" ng-repeat="cgt in cgts">
+    <!-- LOOP OVER THE CGTS -->
+    <div ng-repeat="cgt in cgts">
         <form>
             <div ng-repeat="i in cgt.cgt_obj">
                 Rate:

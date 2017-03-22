@@ -45,8 +45,9 @@ var accountController = angular.module('accountController', [])
 	$scope.account_obj = {
         name: 'account here',
         balance: 0,
-        rules: 'rules here',
-		date: $filter("date")(Date.now(), 'yyyy-MM-dd')
+        rules: [{percent: 99, rule: '>', amount: 0}],
+		startdate: $filter("date")(Date.now(), 'yyyy-MM-dd'),
+		enddate: $filter("date")(Date.now(), 'yyyy-MM-dd')
 	 };
 
 		// GET =====================================================================
@@ -89,10 +90,31 @@ var accountController = angular.module('accountController', [])
 					});
 			}
 		};
-		// ADD =====================================================================
+		// ADD RULE ==================================================================
+		$scope.addRule = function(id, contentId, account_obj, rule) {
+			var pms = {'id':id, 'contentId':contentId, 'account_obj': account_obj, 'rule':rule};
+				Accounts.addRule(pms)
+		    	// if successful creation, call our get function to get all the new todos
+		    	.success(function(data) {
+					$scope.loading = false;
+					$scope.accounts = data; // assign our new list of todos
+				});
+		};
+		// DELETE RULE ==================================================================
+		$scope.deleteRule = function(id, contentId, account_obj, ruleId) {
+			var pms = {'id':id, 'contentId':contentId, 'account_obj': account_obj, 'ruleId':ruleId};
+				Accounts.deleteRule(pms)
+		    	// if successful creation, call our get function to get all the new todos
+		    	.success(function(data) {
+					$scope.loading = false;
+					$scope.accounts = data; // assign our new list of todos
+				});
+		};
+		// ADD ACCOUNT ================================================================
 		$scope.addAccount = function(id,account) {
 			var pms = {'id':id, 'account_obj': $scope.account_obj};
-			pms.account_obj.date = new Date(pms.account_obj.date).toISOString();
+			pms.account_obj.startdate = new Date(pms.account_obj.startdate).toISOString();
+			pms.account_obj.enddate = new Date(pms.account_obj.enddate).toISOString();
 			var newaccount = account.account_obj.push(pms.account_obj);
 			pms = {'id':id, 'account_obj': account.account_obj};
 			// validate the text to make sure that something is there

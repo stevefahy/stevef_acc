@@ -70,7 +70,8 @@ module.exports = function(app) {
                 account.account_obj[i].name = toupdate[i].name;
                 account.account_obj[i].balance = toupdate[i].balance;
                 account.account_obj[i].rules = toupdate[i].rules;
-                account.account_obj[i].date = toupdate[i].date;
+                account.account_obj[i].startdate = toupdate[i].startdate;
+                account.account_obj[i].enddate = toupdate[i].enddate;
             }
             var test4 = new Account(account);
             test4.save(function(err, account) {
@@ -107,6 +108,56 @@ module.exports = function(app) {
             } else {
                 getAccounts(res);
             }
+        });
+    });
+
+    // delete a rule
+    app.post('/api/accounts/delete/:id/:contentId', function(req, res) {
+        var id = req.params.contentId;
+        var contentId = req.body.ruleId;
+        Account.findById({ _id: req.params.id }, function(err, account) {
+            if (err) {
+                console.log('error');
+                res.send(err);
+            }
+            var toRemove;
+            for (var i = 0, l = account.account_obj.length; i < l; i++) {
+                if (account.account_obj[i]._id == req.params.contentId) {
+                    for (var t = 0, l2 = account.account_obj[i].rules.length; t < l2; t++) {
+                        if (account.account_obj[i].rules[t]._id == contentId) {
+                            toRemove = account.account_obj[i].rules[t];
+                        }
+                    }
+                    toRemove.remove();
+                }
+            }
+            var test4 = new Account(account);
+            test4.save(function(err, account) {
+                if (err)
+                    res.send(err);
+                getAccounts(res);
+            });
+        });
+    });
+
+    // add a rule
+    app.put('/api/accounts/:id/:contentId', function(req, res) {
+        Account.findById({ _id: req.params.id }, function(err, account) {
+            if (err) {
+                console.log('error');
+                res.send(err);
+            }
+            for (var i = 0, l = account.account_obj.length; i < l; i++) {
+                if (account.account_obj[i]._id == req.params.contentId) {
+                    account.account_obj[i].rules.push(req.body.rule);
+                }
+            }
+            var test4 = new Account(account);
+            test4.save(function(err, account) {
+                if (err)
+                    res.send(err);
+                getAccounts(res);
+            });
         });
     });
     // CGTS
@@ -149,7 +200,7 @@ module.exports = function(app) {
                 toupdate = req.body.cgt_obj;
             }
             if (cgt.cgt_obj.length < req.body.cgt_obj.length) {
-                cgt.cgt_obj.push({ rate: '', startdate: '', enddate: ''});
+                cgt.cgt_obj.push({ rate: '', startdate: '', enddate: '' });
             }
             for (var i = 0, l = cgt.cgt_obj.length; i < l; i++) {
                 cgt.cgt_obj[i].rate = toupdate[i].rate;

@@ -1,1 +1,1 @@
-angular.module('scotchTodo', ['cgtController', 'cgtService', 'accountController', 'accountService']);
+angular.module('accountPage', ['cgtController', 'cgtService', 'accountController', 'accountService']);
