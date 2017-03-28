@@ -42,8 +42,9 @@
         margin-top: 7px;
         margin-bottom: 7px;
     }
-    .input-group-btn .btn{
-        margin-top:  0px;
+    
+    .input-group-btn .btn {
+        margin-top: 0px;
         margin-bottom: 0px;
     }
     
@@ -62,20 +63,15 @@
     input.form-control.form-control-inline.ng-pristine.ng-valid {
         max-width: 83%;
     }
-    .form-control.sidebyside{
+    
+    .form-control.sidebyside {
         width: 33%;
     }
-
+    
+    div.white-space-pre-line {
+        white-space: pre-line;
+    }
     </style>
-    <!-- SPELLS -->
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
-    <!-- load angular -->
-    <script src="js/controllers/main.js"></script>
-    <!-- load up our controller -->
-    <script src="js/services/todos.js"></script>
-    <!-- load our service -->
-    <script src="js/core.js"></script>
-    <!-- load our main application -->
 </head>
 
 <body>
@@ -86,15 +82,31 @@
             </div>
         </div>
     </nav>
-    <div class="container theme-showcase" role="main">
-        <div class="jumbotron">
+    <div ng-app="accountPage">
+        <div class="container theme-showcase" role="main">
             <!-- Include template -->
-            <div ng-include src="'account.html'"></div>
+            <div ng-include src="'summary.html'"></div>
+            <div class="jumbotron">
+                <!-- Include template -->
+                <div ng-include src="'account.html'"></div>
+            </div>
+            <div class="jumbotron">
+                <!-- Include template -->
+                <div ng-include src="'cgt.html'"></div>
+            </div>
         </div>
-        <br>
-        <!-- Include template -->
-        <div ng-include src="'cgt.html'"></div>
     </div>
+    <!-- SPELLS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <!-- load angular -->
+    <script src="js/controllers/main_ctrl.js"></script>
+    <script src="js/controllers/cgt_ctrl.js"></script>
+    <script src="js/controllers/account_ctrl.js"></script>
+    <!-- load up our controller -->
+    <script src="js/services/todos.js"></script>
+    <!-- load our service -->
+    <script src="js/core.js"></script>
+    <!-- load our main application -->
 </body>
 
 </html>

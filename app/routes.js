@@ -21,7 +21,6 @@ function getAccounts(res) {
     });
 }
 
-
 module.exports = function(app) {
     // api ---------------------------------------------------------------------
     // ACCOUNTS
@@ -43,11 +42,13 @@ module.exports = function(app) {
             getAccounts(res);
         });
     });
-
-    formatDate = function(x) {
+/*
+    formatDate
+ = function(x) {
         var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
         return formattedDate;
     };
+    */
 
     // update a todo
     app.put('/api/accounts/:account_id', function(req, res) {
@@ -180,11 +181,12 @@ module.exports = function(app) {
         });
     });
 
-
+/*
     formatDate = function(x) {
         var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
         return formattedDate;
     };
+    */
 
     // update a cgt
     app.put('/api/cgts/:cgt_id', function(req, res) {

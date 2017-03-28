@@ -1,0 +1,7 @@
+<div ng-controller="accountPageController">
+    Summary
+    <br>Total accounts balance to date: {{summary.balancetodate}}
+    <br>Total accounts interest to date: {{summary.interesttodate}}
+    <br>Total interest to date after tax: {{summary.calculateCGT(summary.cgt_rate,summary.interesttodate) | number : 2}}
+    <br>Total balance to date: {{summary.calculateTotalBalance(summary.balancetodate, summary.calculateCGT(summary.cgt_rate,summary.interesttodate)) | number : 2}}
+</div>

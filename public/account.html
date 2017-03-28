@@ -1,6 +1,21 @@
 <div ng-controller="accountController">
+    Accounts:
+    <br>
     <div ng-repeat="account in accounts">
-        <div class="panel panel-primary">
+        <!-- BRIEF -->
+        name: {{accountCalc.ac_current[$index].name}}
+        <br> balance: {{accountCalc.ac_current[$index].balance}}
+        <br> from: {{summary.formatDateLong(accountCalc.ac_current[$index].startdate)}} to : {{summary.formatDateLong(accountCalc.ac_current[$index].enddate)}}
+        <br> rules:
+        <span ng-repeat="j in accountCalc.ac_current[$index].rules">
+        {{j.percent}}{{j.rule}}{{j.amount}}
+        </span>
+        <div>Total interest to date: {{accountCalc.ac_interest[$index] | number : 2}}</div>
+        <!-- BRIEF -->
+        <a href="#" ng-click="showAccounts = !showAccounts">
+            <span class="glyphicon glyphicon-cog"></span>
+        </a>
+        <div class="panel panel-primary" ng-show="showAccounts">
             <div class="panel-heading">
                 <h3 class="panel-title">Account</h3>
             </div>
@@ -19,7 +34,7 @@
                             <div ng-repeat="j in i.rules">
                                 <div class="input-group">
                                     <span class="input-group-addon">Interest rules</span>
-                                    <input class="form-control" type="text" value={{j.percent}}{{j.rule}}{{j.amount}}>
+                                    <input class="form-control" type="text" value={{j.percent}}{{j.rule}}{{j.amount}} readonly="true">
                                     <span class="input-group-btn">
                                     <button class="btn btn-default" type="button" ng-click="deleteRule(account._id,i._id,account,j._id)"><span class="glyphicon glyphicon-minus-sign"></span></button>
                                     </span>
@@ -55,7 +70,11 @@
                         <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateAccount(account._id, account)">Update</button>
                     </div>
                 </form>
-                <div class="panel panel-success subpanel">
+               <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+    <span class="glyphicon glyphicon-cog"></span> Sub Account add
+</a>
+
+                <div class="panel panel-success subpanel" ng-show="showCreateAccount">
                     <div class="panel-heading">
                         <h4 class="panel-title">Sub Account add</h4>
                     </div>
@@ -92,7 +111,10 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-success">
+    <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+        <span class="glyphicon glyphicon-cog"></span> Create account
+    </a>
+    <div class="panel panel-success" ng-show="showCreateAccount">
         <div class="panel-heading dark-green">
             <h4 class="panel-title">Account create</h4>
         </div>

@@ -1,52 +1,102 @@
 <div ng-controller="cgtController">
-    <!-- CGT LIST -->
-    <p>CGT</p>
+    CGT
     <!-- LOOP OVER THE CGTS -->
     <div ng-repeat="cgt in cgts">
-        <form>
-            <div ng-repeat="i in cgt.cgt_obj">
-                Rate:
-                <input type="number" ng-model="i.rate">
-                <br> Start Date:
-                <label>{{i.startdate}}</label>
-                <input type="date" ng-model="i.startdate">
-                <br> End Date:
-                <label>{{i.enddate}}</label>
-                <input type="date" ng-model="i.enddate">
-                <input type="checkbox" ng-click="deleteContent(cgt._id,i._id)"></input>
+        <!-- BRIEF -->
+        Rate: {{summary.cgt_rate}}
+        <br> from: {{summary.formatDateLong(summary.cgt_start)}} to : {{summary.formatDateLong(summary.cgt_end)}}
+        <a href="#" ng-click="showAccounts = !showAccounts">
+            <span class="glyphicon glyphicon-cog"></span>
+        </a>
+        <div class="panel panel-primary" ng-show="showAccounts">
+            <div class="panel-heading">
+                <h3 class="panel-title">CGT</h3>
             </div>
-            <input type="checkbox" ng-click="deleteCgt(cgt._id)"></input>
-            <button type="submit" class="btn btn-primary btn-md" ng-click="updateCgt(cgt._id, cgt)">Update</button>
-        </form>
-        <p class="text-center" ng-show="loading">
-            <span class="fa fa-spinner fa-spin fa-3x"></span>
-        </p>
-        <br>
-        <p>Sub CGT add</p>
-        <form>
-            Rate:
-            <input type="number" ng-model="cgt_obj.rate">
-            <br> Start Date:
-            <input type="date" ng-model="cgt_obj.startdate">
-            <br> End Date:
-            <input type="date" ng-model="cgt_obj.enddate">
-            <br>
-            <button type="submit" class="btn btn-primary btn-md" ng-click="addCgt(cgt._id, cgt)">Add</button>
-        </form>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="input-group">
+                        <div ng-repeat="i in cgt.cgt_obj">
+                            <div class="input-group">
+                                <span class="input-group-addon">Rate</span>
+                                <input class="form-control" type="text" ng-model="i.rate">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Start Date</span>
+                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.startdate)}} disabled>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">Start Date</span>
+                                <input class="form-control" type="date" ng-model="i.startdate">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">End Date</span>
+                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.enddate)}} disabled>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">End Date</span>
+                                <input class="form-control" type="date" ng-model="i.enddate">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-warning" ng-click="deleteContent(cgt._id,i._id)">Delete</button>
+                        </div>
+                        <button type="submit" class="btn btn-danger" ng-click="deleteCgt(cgt._id)">Delete</button>
+                        <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateCgt(cgt._id, cgt)">Update</button>
+                    </div>
+                </form>
+                <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+                    <span class="glyphicon glyphicon-cog"></span> Sub Cgt add
+                </a>
+                <div class="panel panel-success subpanel" ng-show="showCreateAccount">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Sub Cgt add</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">Rate</span>
+                                    <input class="form-control" type="text" ng-model="cgt_obj.rate">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Start Date</span>
+                                    <input class="form-control form-control-inline" type="date" ng-model="cgt_obj.startdate">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">End Date</span>
+                                    <input class="form-control form-control-inline" type="date" ng-model="cgt_obj.enddate">
+                                </div>
+                                <button type="submit" class="btn btn btn-success" ng-click="addCgt(cgt._id, cgt)">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <p>Cgt create</p>
-    <form>
-        Rate:
-        <input type="number" ng-model="cgt_obj.rate">
-        <br> Start date:
-        <input type="date" ng-model="cgt_obj.startdate">
-        <br> End date:
-        <input type="date" ng-model="cgt_obj.enddate">
-        <button type="submit" class="btn btn-primary btn-md" ng-click="createCgt()">Create</button>
-    </form>
+    <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+        <span class="glyphicon glyphicon-cog"></span> Create Cgt
+    </a>
+    <div class="panel panel-success" ng-show="showCreateAccount">
+        <div class="panel-heading dark-green">
+            <h4 class="panel-title">Cgt create</h4>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="input-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Rate</span>
+                        <input class="form-control" type="text" ng-model="cgt_obj.rate">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Start Date</span>
+                        <input class="form-control" type="date" ng-model="cgt_obj.startdate">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">End Date</span>
+                        <input class="form-control" type="date" ng-model="cgt_obj.enddate">
+                    </div>
+                    <button type="submit" class="btn btn-success" ng-click="createCgt()">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
