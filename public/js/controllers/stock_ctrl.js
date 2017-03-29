@@ -1,43 +1,39 @@
 var stockConroller = angular.module('stockController', [])
-    .controller('stockController', ['$scope', '$http', '$filter', 'Stocks', 'summary', function($scope, $http, $filter, Stocks, summary) {
+    .controller('stockController', ['$scope', '$http', '$filter', 'Stocks', 'summary', '$resource', 'getData', function($scope, $http, $filter, Stocks, summary, $resource, getData) {
 
         $scope.summary = summary;
         var s = summary;
 
-/*
+$scope.ticker_name = 'GOOGL';
+
+     var api = getData.getStockQuote($scope.ticker_name);
+     //console.log('api: ' + api);
+    var data = api.get({symbol:$scope.ticker_name}, function() {
+        var quote = data.query.results.quote;
+        $scope.lang = data.query.lang;
+        $scope.lastTradeDate = quote.LastTradeDate;
+        $scope.lastTradeTime = quote.LastTradeTime;
+        $scope.lastTradePriceOnly = quote.LastTradePriceOnly;
+
+        $scope.Name = quote.Name;
+        $scope.symbol = quote.symbol;
+    });
+
+  
+  /*
 $scope.googleFinance = $resource('https://finance.google.com/finance/info', 
                                      {client:'ig', callback:'JSON_CALLBACK'},
-                                     {get: {method:'JSONP', params:{q:'INDEXSP:.INX'}, isArray: true}});
+                                     {get: {method:'JSONP', params:{q:'googl'}, isArray: true}});
+                                     
 
-    $scope.indexResult = $scope.googleFinance.get();*/
-/*
-    $scope.items = [];
-
-        $scope.getItems = function() {
-         $http({method : 'GET',url : 'https://finance.google.com/finance/info?client=ig&q=googl'})
-            .success(function(data, status) {
-                $scope.items = data;
-                console.log(data);
-             })
-            .error(function(data, status) {
-                alert("Error");
-            });
-        };
+$scope.indexResult = $scope.googleFinance.get();
 */
 
-         $http.get("https://finance.google.com/finance/info?client=ig&q=googl")
-    .then(function(response) {
-        //First function handles success
-        var myString = response.data.substring(3);
-        $scope.content = JSON.parse(myString);
-    }, function(response) {
-        //Second function handles error
-        $scope.content = "Something went wrong";
-    });
+
 
         // GET =====================================================================
         // when landing on the page, get all cgts and show them
-        // use the service to get all the todos
+        // use the service to gallet  the todos
         Stocks.get()
             .success(function(data) {
                 $scope.stocks = data;
