@@ -8,7 +8,7 @@ angular.module('accountPage', ['cgtController', 'cgtService', 'accountController
     // The complete url is from https://developer.yahoo.com/yql/.
     this.getStockQuote = function(ticker) {
 
-        var url = 'http://query.yahooapis.com/v1/public/yql';
+        var url = 'https://query.yahooapis.com/v1/public/yql';
         var data = encodeURIComponent(
             "select * from yahoo.finance.quotes where symbol in ('" + ticker + "')");
         url += '?q=' + data + '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
