@@ -1,5 +1,6 @@
 var Cgt = require('./models/cgt');
 var Account = require('./models/account');
+var Stock = require('./models/stock');
 
 function getCgts(res) {
     Cgt.find(function(err, cgts) {
@@ -18,6 +19,16 @@ function getAccounts(res) {
             res.send(err);
         }
         res.json(accounts); // return all todos in JSON format
+    });
+}
+
+function getStocks(res) {
+    Stock.find(function(err, stocks) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err) {
+            res.send(err);
+        }
+        res.json(stocks); // return all todos in JSON format
     });
 }
 
@@ -245,6 +256,96 @@ module.exports = function(app) {
                 console.log('ERROR: ' + err);
             } else {
                 getCgts(res);
+            }
+        });
+    });
+
+
+
+    // STOCKS
+    // get all stocks
+    app.get('/api/stocks', function(req, res) {
+        // use mongoose to get all todos in the database
+        getStocks(res);
+    });
+    // create cgt and send back all cgts after creation
+    app.post('/api/stocks', function(req, res) {
+        // create a todo, information comes from AJAX request from Angular
+        Stock.create({
+            stock_obj: req.body,
+            done: false
+        }, function(err, cgt) {
+            if (err)
+                res.send(err);
+            // get and return all the todos after you create another
+            getStocks(res);
+        });
+    });
+
+/*
+    formatDate = function(x) {
+        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
+        return formattedDate;
+    };
+    */
+
+    // update a cgt
+    app.put('/api/stocks/:stock_id', function(req, res) {
+        Stock.findById({ _id: req.params.stock_id }, function(err, stock) {
+            if (err) {
+                console.log('error');
+                res.send(err);
+            }
+            var toupdate;
+            if (req.body.stock_obj.length === undefined) {
+                toupdate = req.body.stock_obj.stock_obj;
+            } else {
+                toupdate = req.body.stock_obj;
+            }
+            if (cgt.stock_obj.length < req.body.stock_obj.length) {
+                stock.stock_obj.push({ rate: '', startdate: '', enddate: '' });
+            }
+            for (var i = 0, l = stock.stock_obj.length; i < l; i++) {
+                stock.stock_obj[i].rate = toupdate[i].rate;
+                stock.stock_obj[i].startdate = toupdate[i].startdate;
+                stock.stock_obj[i].enddate = toupdate[i].enddate;
+
+            }
+            var test6 = new Stock(stock);
+            test6.save(function(err, stock) {
+                if (err)
+                    res.send(err);
+                getStocks(res);
+            });
+
+        });
+    });
+
+    // delete a cgt
+    app.delete('/api/stocks/:stock_id', function(req, res) {
+        Stock.remove({
+            _id: req.params.cgt_id
+        }, function(err, cgt) {
+            if (err)
+                res.send(err);
+            getStocks(res);
+        });
+    });
+    // delete sub cgt
+    app.post('/api/stocks/:id/:contentId', function(req, res) {
+        var id = req.params.id; // not req.body._id
+        var contentId = req.params.contentId; // not req.body._id
+        Stock.findByIdAndUpdate(id, {
+            $pull: {
+                stock_obj: {
+                    _id: contentId //_eventId is string representation of event ID
+                }
+            }
+        }, function(err, stock) {
+            if (err) {
+                console.log('ERROR: ' + err);
+            } else {
+                getStocks(res);
             }
         });
     });

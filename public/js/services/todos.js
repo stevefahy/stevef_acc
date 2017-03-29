@@ -96,3 +96,26 @@ angular.module('accountPageService', [])
             }
         };
     }]);
+
+angular.module('stockService', [])
+    // each function returns a promise object 
+    .factory('Stocks', ['$http', function($http) {
+        return {
+            get: function() {
+                return $http.get('/api/stocks');
+            },
+            create: function(cgtData) {
+                return $http.post('/api/stocks', stockData);
+            },
+            delete: function(id) {
+                return $http.delete('/api/stocks/' + id);
+            },
+            update: function(pms) {
+                var theurl = '/api/stocks/' + pms.id;
+                return $http.put(theurl, pms);
+            },
+            deleteContent: function(id, contentId) {
+                return $http.post('/api/stocks/' + id + '/' + contentId);
+            }
+        };
+    }]);

@@ -1,4 +1,4 @@
-angular.module('accountPage', ['cgtController', 'cgtService', 'accountController', 'accountService', 'accountPageController', 'accountPageService']);
+angular.module('accountPage', ['cgtController', 'cgtService', 'accountController', 'accountService', 'accountPageController', 'accountPageService', 'stockController', 'stockService']);
 
 /*
 angular.module('accountPage').directive('test', function ($compile) {
