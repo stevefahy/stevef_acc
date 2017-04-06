@@ -6,166 +6,52 @@ var accountController = angular.module('accountController', [])
         // DIV Show/hide
         $scope.showAccounts = false;
         $scope.showCreateAccount = false;
-
-        $scope.formatDate = function(x) {
-            var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
-            return formattedDate;
-        };
+        $scope.showSection = false;
 
         $scope.account_obj = {
             name: 'account here',
             balance: 0,
+            currency: '',
             rules: [{ percent: 99, rule: '>', amount: 0 }],
             startdate: $filter("date")(Date.now(), 'yyyy-MM-dd'),
             enddate: $filter("date")(Date.now(), 'yyyy-MM-dd')
         };
 
-
         // GET =====================================================================
-        // when landing on the page, get all cgts and show them
-        // use the service to get all the todos
+        // when landing on the page, get all accounts and show them
+        // use the service to get all the accounts
         Accounts.get()
             .success(function(data) {
                 $scope.accounts = data;
                 $scope.loading = false;
                 calulateInterest();
             });
-
-        calcPeriodInterest = function(balance, percent, rule, amount, start, end) {
-
-            var today = new Date();
-            var daystocalc = 0;
-            var balance_calc;
-            var interest_accrued = 0;
-            var interest_accrued_todate = 0;
-
-            // starts before today
-            if (s.elapsedDays(today, start) > 0) {
-                // ends before today
-                if (s.elapsedDays(today, end) > 0) {
-                    // check if the period is within this year
-                    daystocalc = s.elapsedDays(end, start) + 1;
-                } else {
-                    // ends after today
-                    daystocalc = s.elapsedDays(today, start);
-                }
-                if (daystocalc > 0) {
-                    if (rule == '>') {
-                        if (balance > amount) {
-                            balance_calc = amount;
-                        } else {
-                            balance_calc = 0;
-                        }
-                    } else {
-                        if (balance < amount) {
-                            balance_calc = balance;
-                        } else {
-                            balance_calc = amount;
-                        }
-                    }
-                    if (balance_calc > 0) {
-                        interest_accrued = balance_calc * (percent);
-                        interest_accrued_todate = (interest_accrued / 365) * daystocalc;
-                    }
-                } else {
-                    // Future rule
-                }
-            }
-            return interest_accrued_todate;
+        addBalanceTotal = function(r, a) {
+            summary.account_balance_total += a / r.Rate;
         };
-
         calulateInterest = function() {
-
-            $scope.accountCalc = {
-                ac_balance: {
-
-                },
-                ac_rules: {
-
-                },
-                ac_interest: {
-
-                },
-                ac_current: {
-
+            var a = summary.categorizeValues($scope.accounts, 'accounts');
+            summary.accounts_past = a.past;
+            summary.accounts_current = a.current;
+            summary.accounts_future = a.future;
+            summary.account_balance_total = 0;
+            if (!summary.account_balance_total) {
+                summary.account_balance_total = 0;
+            }
+            summary.account_interest_total = 0;
+            for (var j in summary.accounts_current) {
+                var ac = 'accounts_current_' + j;
+                summary[ac] = summary.accounts_current[j];
+                if (!summary.account_interest) {
+                    summary.account_interest = [];
                 }
-
-            };
-
-            var count;
-            var balance;
-            var today = new Date();
-            var year = new Date().getFullYear();
-            var start_date;
-            var history = false;
-
-            angular.forEach($scope.accounts, function(value, index) {
-                count = 0;
-
-                $scope.accountCalc.ac_balance[index] = 0;
-                $scope.accountCalc.ac_interest[index] = 0;
-
-                angular.forEach(value.account_obj, function(value2, index2) {
-
-                    if (new Date(value2.startdate).getFullYear() < year && new Date(value2.enddate).getFullYear() < year) {
-                        // start and end last year
-                        // Do history
-                        history = true;
-                    } else if (new Date(value2.startdate).getFullYear() < year && new Date(value2.enddate).getFullYear() == year) {
-                        // starts previous year but ends within current year. use 1 January if current year as start date
-                        history = false;
-                        start_date = new Date(year, 0, 01);
-                    } else if (new Date(value2.startdate).getFullYear() == year) {
-                        // start and end this year
-                        start_date = value2.startdate;
-                        history = false;
-                    } else {
-                        // start future year
-                        history = true;
-                    }
-
-                    if (!history) {
-                        // if date starts before today
-                        if (s.elapsedDays(today, start_date) > 0) {
-                            if (s.elapsedDays(today, value2.enddate) > 0) {
-                                // ends before today
-                            } else {
-                                // ends after today (and starts before today - current period)
-                                $scope.accountCalc.ac_balance[index] = value2.balance;
-                                // store current details for summary
-                                $scope.accountCalc.ac_current[index] = value2;
-                            }
-                        }
-
-                        angular.forEach(value2.rules, function(value3, index3) {
-                            if ($scope.accountCalc.ac_rules[index] === undefined) {
-                                $scope.accountCalc.ac_rules[index] = value3.percent + value3.rule + value3.amount;
-                            } else {
-                                $scope.accountCalc.ac_rules[index] += '\n' + value3.percent + value3.rule + value3.amount;
-                            }
-                            $scope.accountCalc.ac_interest[index] += calcPeriodInterest(value2.balance, value3.percent, value3.rule, value3.amount, start_date, value2.enddate);
-                        });
-                        count++;
-                    }
-                });
-            });
-            calcInterestTotal();
-            calcBalanceTotal();
-        };
-
-        calcInterestTotal = function() {
-            var interesttodateTotal = 0;
-            for (var i in $scope.accountCalc.ac_interest) {
-                interesttodateTotal += $scope.accountCalc.ac_interest[i];
+                if (!summary.account_balance) {
+                    summary.account_balance = [];
+                }
+                summary.account_interest[j] = summary.calculateInterest(summary.accounts_current[j]);
+                summary.account_interest_total += summary.account_interest[j];
+                summary.account_balance_total += summary.calculateBalanceTotal(summary.accounts_current[j]);
             }
-            $scope.summary.interesttodate = (interesttodateTotal).toFixed(2);
-        };
-        calcBalanceTotal = function() {
-            var balancetodateTotal = 0;
-            for (var i in $scope.accountCalc.ac_balance) {
-                balancetodateTotal += $scope.accountCalc.ac_balance[i];
-            }
-            $scope.summary.balancetodate = (balancetodateTotal).toFixed(2);
         };
         // CREATE ==================================================================
         // when submitting the add form, send the text to the node API
@@ -176,10 +62,10 @@ var accountController = angular.module('accountController', [])
                 $scope.loading = true;
                 // call the create function from our service (returns a promise object)
                 Accounts.create($scope.account_obj)
-                    // if successful creation, call our get function to get all the new todos
+                    // if successful creation, call our get function to get all the new accounts
                     .success(function(data) {
                         $scope.loading = false;
-                        $scope.accounts = data; // assign our new list of todos
+                        $scope.accounts = data; // assign our new list of accounts
                         calulateInterest();
                     });
             }
@@ -193,10 +79,10 @@ var accountController = angular.module('accountController', [])
                 $scope.loading = true;
                 // call the create function from our service (returns a promise object)
                 Accounts.update(pms)
-                    // if successful creation, call our get function to get all the new todos
+                    // if successful creation, call our get function to get all the new accounts
                     .success(function(data) {
                         $scope.loading = false;
-                        $scope.accounts = data; // assign our new list of todos
+                        $scope.accounts = data; // assign our new list of accounts
                         calulateInterest();
                     });
             }
@@ -205,10 +91,10 @@ var accountController = angular.module('accountController', [])
         $scope.addRule = function(id, contentId, account_obj, rule) {
             var pms = { 'id': id, 'contentId': contentId, 'account_obj': account_obj, 'rule': rule };
             Accounts.addRule(pms)
-                // if successful creation, call our get function to get all the new todos
+                // if successful creation, call our get function to get all the new accounts
                 .success(function(data) {
                     $scope.loading = false;
-                    $scope.accounts = data; // assign our new list of todos
+                    $scope.accounts = data; // assign our new list of accounts
                     calulateInterest();
                 });
         };
@@ -216,10 +102,10 @@ var accountController = angular.module('accountController', [])
         $scope.deleteRule = function(id, contentId, account_obj, ruleId) {
             var pms = { 'id': id, 'contentId': contentId, 'account_obj': account_obj, 'ruleId': ruleId };
             Accounts.deleteRule(pms)
-                // if successful creation, call our get function to get all the new todos
+                // if successful creation, call our get function to get all the new accounts
                 .success(function(data) {
                     $scope.loading = false;
-                    $scope.accounts = data; // assign our new list of todos
+                    $scope.accounts = data; // assign our new list of accounts
                     calulateInterest();
                 });
         };
@@ -236,10 +122,10 @@ var accountController = angular.module('accountController', [])
                 $scope.loading = true;
                 // call the create function from our service (returns a promise object)
                 Accounts.update(pms)
-                    // if successful creation, call our get function to get all the new todos
+                    // if successful creation, call our get function to get all the new accounts
                     .success(function(data) {
                         $scope.loading = false;
-                        $scope.accounts = data; // assign our new list of todos
+                        $scope.accounts = data; // assign our new list of accounts
                         calulateInterest();
                     });
             }
@@ -249,20 +135,20 @@ var accountController = angular.module('accountController', [])
         $scope.deleteAccount = function(id) {
             $scope.loading = true;
             Accounts.delete(id)
-                // if successful creation, call our get function to get all the new todos
+                // if successful creation, call our get function to get all the new accounts
                 .success(function(data) {
                     $scope.loading = false;
-                    $scope.accounts = data; // assign our new list of todos
+                    $scope.accounts = data; // assign our new list of accounts
                     calulateInterest();
                 });
         };
         // DELETE SUB ACCOUNT =======================================================
         $scope.deleteContent = function(id, contentId) {
             Accounts.deleteContent(id, contentId)
-                // if successful creation, call our get function to get all the new todos
+                // if successful creation, call our get function to get all the new accounts
                 .success(function(data) {
                     $scope.loading = false;
-                    $scope.accounts = data; // assign our new list of todos
+                    $scope.accounts = data; // assign our new list of accounts
                     calulateInterest();
                 });
         };

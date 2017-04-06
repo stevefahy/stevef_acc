@@ -1,17 +1,18 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var cgtSchema = new Schema({
-    cgt_obj: [{
+var taxSchema = new Schema({
+    tax_obj: [{
+        tax_type: String,
         rate: Number,
         startdate: Date,
         enddate: Date
     }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
-});
+}, { collection: 'taxs' });
 
-cgtSchema.pre('save', function(next) {
+taxSchema.pre('save', function(next) {
     var currentTime = new Date().toISOString();
     if (currentTime != this.createdAt.toISOString()) {
         this.updatedAt = currentTime;
@@ -19,6 +20,6 @@ cgtSchema.pre('save', function(next) {
     next();
 });
 
-var Cgt = mongoose.model('Cgt', cgtSchema);
+var Tax = mongoose.model('Tax', taxSchema);
 
-module.exports = Cgt;
+module.exports = Tax;

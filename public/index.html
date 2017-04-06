@@ -15,63 +15,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <!-- load bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-    html {
-        overflow-y: scroll;
-    }
-    
-    body {
-        padding-top: 70px;
-        padding-bottom: 30px;
-    }
-    
-    .input-group-addon {
-        min-width: 110px;
-        text-align: left;
-    }
-    
-    .input-group {
-        width: 100%;
-    }
-    
-    .btn-pair-right {
-        margin-left: 5px;
-    }
-    
-    .btn {
-        margin-top: 7px;
-        margin-bottom: 7px;
-    }
-    
-    .input-group-btn .btn {
-        margin-top: 0px;
-        margin-bottom: 0px;
-    }
-    
-    .panel-heading.dark-green {
-        background-image: linear-gradient(to bottom, #6abe6a 0, #419441 100%);
-    }
-    
-    .panel-heading.dark-green .panel-title {
-        color: #FFFFFF;
-    }
-    
-    .subpanel .input-group {
-        max-width: 90%;
-    }
-    
-    input.form-control.form-control-inline.ng-pristine.ng-valid {
-        max-width: 83%;
-    }
-    
-    .form-control.sidebyside {
-        width: 33%;
-    }
-    
-    div.white-space-pre-line {
-        white-space: pre-line;
-    }
-    </style>
+    <!-- Local styles -->
+    <link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 
 <body>
@@ -86,33 +31,26 @@
         <div class="container theme-showcase" role="main">
             <!-- Include template -->
             <div ng-include src="'summary.html'"></div>
-            <div class="jumbotron">
-                <!-- Include template -->
-                <div ng-include src="'account.html'"></div>
-            </div>
-            <div class="jumbotron">
-                <!-- Include template -->
-                <div ng-include src="'stock.html'"></div>
-            </div>
-            <div class="jumbotron">
-                <!-- Include template -->
-                <div ng-include src="'cgt.html'"></div>
-            </div>
+            <!-- Include template -->
+            <div ng-include src="'account.html'"></div>
+            <!-- Include template -->
+            <div ng-include src="'stock.html'"></div>
+            <!-- Include template -->
+            <div ng-include src="'tax.html'"></div>
         </div>
     </div>
-    <!-- SPELLS -->
+    <!-- Angular -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular-resource.min.js"></script>
-    <!-- load angular -->
+    <!-- load Controllers -->
     <script src="js/controllers/main_ctrl.js"></script>
-    <script src="js/controllers/cgt_ctrl.js"></script>
+    <script src="js/controllers/tax_ctrl.js"></script>
     <script src="js/controllers/account_ctrl.js"></script>
     <script src="js/controllers/stock_ctrl.js"></script>
-    <!-- load up our controller -->
-    <script src="js/services/todos.js"></script>
-    <!-- load our service -->
-    <script src="js/core.js"></script>
+    <!-- load Services -->
+    <script src="js/services/services.js"></script>
     <!-- load our main application -->
+    <script src="js/core.js"></script>
 </body>
 
 </html>

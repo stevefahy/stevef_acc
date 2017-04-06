@@ -1,7 +1,47 @@
 <div ng-controller="accountPageController">
-    Summary
-    <br>Total accounts balance to date: {{summary.balancetodate}}
-    <br>Total accounts interest to date: {{summary.interesttodate}}
-    <br>Total interest to date after tax: {{summary.calculateCGT(summary.cgt_rate,summary.interesttodate) | number : 2}}
-    <br>Total balance to date: {{summary.calculateTotalBalance(summary.balancetodate, summary.calculateCGT(summary.cgt_rate,summary.interesttodate)) | number : 2}}
+    <h3>Summary</h3>
+    <!-- ACCOUNTS -->
+    <table class="table table-striped">
+        <tr>
+            <td>Total accounts balance to date:</td>
+            <td>{{summary.account_balance_total | currency : '€'}}</td>
+        </tr>
+        <tr>
+            <td>Total accounts interest to date:</td>
+            <td>{{summary.account_interest_total | currency : '€'}}</td>
+        </tr>
+        <tr>
+            <td>Total interest to date after tax:</td>
+            <td>{{summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) | currency : '€'}}</td>
+        </tr>
+    </table>
+    <!-- STOCKS -->
+    <div ng-repeat="i in summary.current_stocks_gain track by $index">
+        <table class="table table-striped stocks-table">
+            <tr>
+                <td class="left-style" width="60%">{{i.ticker}} after tax & fees:</td>
+                <td width="20%" ng-class="(i.percent_gain)<0 ? 'red' : 'green'">{{i.percent_gain | number : 2}}%</td>
+                <td width="20%" ng-class="(i.percent_gain)<0 ? 'red' : 'green'">€{{i.gain | number : 2}}</td>
+            </tr>
+            <tr>
+                <td>Original value:</td>
+                <td></td>
+                <td>{{i.original_value | currency : '€'}}</td>
+            </tr>
+            <tr>
+                <td>New value:</td>
+                <td></td>
+                <td>{{i.original_value+i.gain | currency : '€'}}</td>
+            </tr>
+        </table>
+    </div>
+    <!-- TOTAL BALANCE -->
+    <table class="table table-striped stocks-table">
+        <tr>
+            <td>
+                <h4>Total balance to date:</h4></td>
+            <td>
+                <h4>{{summary.account_balance_total + summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) + summary.current_stocks_gain_total | currency : '€'}}</h4></td>
+        </tr>
+    </table>
 </div>

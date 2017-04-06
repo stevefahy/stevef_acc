@@ -1,116 +1,206 @@
 <div ng-controller="stockController">
-    STOCK
-    <!--
-<br>
-stock: {{indexResult[0]}}
-<br>
-name: {{indexResult[0].t}}
-price: {{indexResult[0]l_cur}}
--->
-
-
-    <span>Last Quote: {{lang}}, {{Name}}, {{symbol}} {{lastTradeDate}}, {{lastTradeTime}}, {{lastTradePriceOnly}}</span>
-
-    <!-- <div ng-repeat="i in items">{{i}}</div>-->
-   
-   
-    <!-- LOOP OVER THE CGTS -->
-    <div ng-repeat="stock in stocks">
-        <!-- BRIEF -->
-        Rate: {{summary.cgt_rate}}
-        <br> from: {{summary.formatDateLong(summary.cgt_start)}} to : {{summary.formatDateLong(summary.cgt_end)}}
-        <a href="#" ng-click="showAccounts = !showAccounts">
-            <span class="glyphicon glyphicon-cog"></span>
-        </a>
-        <div class="panel panel-primary" ng-show="showAccounts">
-            <div class="panel-heading">
-                <h3 class="panel-title">CGT</h3>
-            </div>
-            <div class="panel-body">
-                <form class="form-horizontal">
-                    <div class="input-group">
-                        <div ng-repeat="i in cgt.cgt_obj">
-                            <div class="input-group">
-                                <span class="input-group-addon">Rate</span>
-                                <input class="form-control" type="text" ng-model="i.rate">
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">Start Date</span>
-                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.startdate)}} disabled>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">Start Date</span>
-                                <input class="form-control" type="date" ng-model="i.startdate">
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">End Date</span>
-                                <input class="form-control" id="disabledInput" type="text" value={{formatDate(i.enddate)}} disabled>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">End Date</span>
-                                <input class="form-control" type="date" ng-model="i.enddate">
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-warning" ng-click="deleteContent(cgt._id,i._id)">Delete</button>
-                        </div>
-                        <button type="submit" class="btn btn-danger" ng-click="deleteCgt(cgt._id)">Delete</button>
-                        <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateCgt(cgt._id, cgt)">Update</button>
-                    </div>
-                </form>
-                <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
-                    <span class="glyphicon glyphicon-cog"></span> Sub Cgt add
-                </a>
-                <div class="panel panel-success subpanel" ng-show="showCreateAccount">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">Sub Cgt add</h4>
-                    </div>
-                    <div class="panel-body">
-                        <form class="form-horizontal">
-                            <div class="input-group">
-                                <div class="input-group">
-                                    <span class="input-group-addon">Rate</span>
-                                    <input class="form-control" type="text" ng-model="cgt_obj.rate">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Start Date</span>
-                                    <input class="form-control form-control-inline" type="date" ng-model="cgt_obj.startdate">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">End Date</span>
-                                    <input class="form-control form-control-inline" type="date" ng-model="cgt_obj.enddate">
-                                </div>
-                                <button type="submit" class="btn btn btn-success" ng-click="addCgt(cgt._id, cgt)">Add</button>
-                            </div>
-                        </form>
-                    </div>
+    <button type="button" class="btn btn-success btn-block
+" ng-click="showSection = !showSection">STOCK</button>
+    <!-- LOOP OVER THE STOCKS -->
+    <div ng-repeat="stock in stocks" ng-show="showSection">
+        <div ng-if="summary.current_stocks_period[$index] == 'current'">
+            <table class="table table-bordered table-curved accounts-table">
+                <thead>
+                    <tr>
+                        <th class="stock-header">{{summary.current_stocks[$index].ticker}}</th>
+                    </tr>
+                </thead>
+                <tr class="stock_orig">
+                    <td>Purchase price</td>
+                    <td>{{summary.getSymbol(summary.current_stocks[$index].currency)}}{{summary.current_stocks[$index].price}}</td>
+                </tr>
+                <tr>
+                    <td>Current price</td>
+                    <td>{{summary.getSymbol(summary.current_stocks[$index].currency)}}{{summary.current_stocks_data[$index].LastTradePriceOnly}}</td>
+                </tr>
+                <tr>
+                    <td>Price change</td>
+                    <td ng-class="(summary.current_stocks_data[$index].LastTradePriceOnly-summary.current_stocks[$index].price)<0 ? 'red' : 'green'">
+                        {{summary.getSymbol(summary.current_stocks[$index].currency)}}{{summary.current_stocks_data[$index].LastTradePriceOnly-summary.current_stocks[$index].price | number : 2}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Percent change</td>
+                    <td ng-class="((summary.current_stocks_data[$index].LastTradePriceOnly-summary.current_stocks[$index].price)/summary.current_stocks[$index].price*100)<0 ? 'red' : 'green'">{{(summary.current_stocks_data[$index].LastTradePriceOnly-summary.current_stocks[$index].price)/summary.current_stocks[$index].price*100 | number : 2}}%</td>
+                </tr>
+                <tr>
+                    <td>Original value</td>
+                    <td>{{summary.getSymbol(summary.current_stocks[$index].currency)}}{{summary.current_stocks[$index].price*summary.current_stocks[$index].amount | number : 2}}</td>
+                </tr>
+                <tr>
+                    <td>Current value</td>
+                    <td>{{summary.getSymbol(summary.current_stocks[$index].currency)}}{{summary.current_stocks_data[$index].LastTradePriceOnly*summary.current_stocks[$index].amount | number : 2}}</td>
+                </tr>
+                <tr>
+                    <td>Value change</td>
+                    <td ng-class="(summary.current_stocks_data[$index].LastTradePriceOnly*summary.current_stocks[$index].amount)-(summary.current_stocks[$index].price*summary.current_stocks[$index].amount)<0 ? 'red' : 'green'">{{summary.getSymbol(summary.current_stocks[$index].currency)}}{{(summary.current_stocks_data[$index].LastTradePriceOnly*summary.current_stocks[$index].amount)-(summary.current_stocks[$index].price*summary.current_stocks[$index].amount) | number : 2}}</td>
+                </tr>
+                <div ng-show="!checkEuro(summary.current_stocks[$index].currency)">
+                    <tr>
+                        <td>Euro value</td>
+                        <td>€{{summary.current_stocks_data[$index].LastTradePriceOnly*summary.current_stocks[$index].amount / summary.current_stocks_fx[$index].Rate | number : 2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="left-style">{{summary.current_stocks[$index].currency}}/EUR rate</td>
+                        <td>{{summary.current_stocks_fx[$index].Rate}}</td>
+                    </tr>
                 </div>
-            </div>
+                <tr class="stock_orig">
+                    <td>Currency</td>
+                    <td>{{summary.current_stocks[$index].currency}}</td>
+                </tr>
+                <tr class="stock_orig">
+                    <td>Amount</td>
+                    <td>{{summary.current_stocks[$index].amount}}</td>
+                </tr>
+                <tr class="stock_orig">
+                    <td>Fee</td>
+                    <td>{{summary.current_stocks[$index].fee}}</td>
+                </tr>
+                <tr class="stock_orig">
+                    <td>FX</td>
+                    <td>{{summary.current_stocks[$index].forex}}</td>
+                </tr>
+                <tr class="stock_orig">
+                    <td colspan="2" class="left-style">From {{summary.formatDateLong(summary.current_stocks[$index].startdate)}} to {{summary.formatDateLong(summary.current_stocks[$index].enddate)}}</td>
+                </tr>
+            </table>
         </div>
-    </div>
-    <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
-        <span class="glyphicon glyphicon-cog"></span> Create Cgt
+        <!-- BRIEF FOR NON-CURRENT -->
+        <div ng-if="summary.current_stocks_period[$index] != 'current'">
+            <table class="table table-bordered table-curved accounts-table">
+                <thead>
+                    <tr>
+                        <th class="stock-header">{{summary.current_stocks[$index].ticker}}</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td colspan="2" class="left-style">From {{summary.formatDateLong(summary.current_stocks[$index].startdate)}}</td>
+                    <td class="left-style">to {{summary.formatDateLong(summary.current_stocks[$index].enddate)}}</td>
+                </tr>
+            </table>
+        </div>
+        <!-- BRIEF -->
+        <table class="table table-bordered accounts-subtable">
+            <tr>
+                <td>
+                    <a href="#" ng-click="showAccounts = !showAccounts">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </a>
+                    <div class="panel panel-success" ng-show="showAccounts">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">STOCK</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+                                <div class="input-group">
+                                    <div ng-repeat="i in stock.stock_obj">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Ticker</span>
+                                            <input class="form-control" type="text" ng-model="i.ticker">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Price</span>
+                                            <input class="form-control" type="text" ng-model="i.price">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Currency</span>
+                                            <input class="form-control" type="text" ng-model="i.currency">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">FX</span>
+                                            <input class="form-control" type="text" ng-model="i.forex">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Amount</span>
+                                            <input class="form-control" type="text" ng-model="i.amount">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Fee</span>
+                                            <input class="form-control" type="text" ng-model="i.fee">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Start Date</span>
+                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.startdate)}} disabled>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Start Date</span>
+                                            <input class="form-control" type="date" ng-model="i.startdate">
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">End Date</span>
+                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.enddate)}} disabled>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">End Date</span>
+                                            <input class="form-control" type="date" ng-model="i.enddate">
+                                        </div>
+                                        <div ng-if="stock.stock_obj.length > 1">
+                                            <button type="submit" class="btn btn-sm btn-warning" ng-click="deleteContent(stock._id,i._id)">Delete</button>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger" ng-click="deleteStock(stock._id)">Delete</button>
+                                    <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateStock(stock._id, stock)">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+    			</div>
+    		</td>
+    	</tr>
+    </table>
+    <span ng-if="$last">
+    <a href="#" class="btn btn-success btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+        <span class="glyphicon glyphicon-cog"></span> Create Stock
     </a>
     <div class="panel panel-success" ng-show="showCreateAccount">
-        <div class="panel-heading dark-green">
-            <h4 class="panel-title">Cgt create</h4>
+        <div class="panel-heading">
+            <h4 class="panel-title">Stock create</h4>
         </div>
         <div class="panel-body">
             <form class="form-horizontal">
                 <div class="input-group">
                     <div class="input-group">
-                        <span class="input-group-addon">Rate</span>
-                        <input class="form-control" type="text" ng-model="cgt_obj.rate">
+                        <span class="input-group-addon">Ticker</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.ticker">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Price</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.price">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Currency</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.currency">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">FX</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.forex">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Amount</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.amount">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Fee</span>
+                        <input class="form-control" type="text" ng-model="stock_obj.fee">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">Start Date</span>
-                        <input class="form-control" type="date" ng-model="cgt_obj.startdate">
+                        <input class="form-control" type="date" ng-model="stock_obj.startdate">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">End Date</span>
-                        <input class="form-control" type="date" ng-model="cgt_obj.enddate">
+                        <input class="form-control" type="date" ng-model="stock_obj.enddate">
                     </div>
-                    <button type="submit" class="btn btn-success" ng-click="createCgt()">Create</button>
+                    <button type="submit" class="btn btn-success" ng-click="createStock()">Create</button>
                 </div>
             </form>
         </div>
     </div>
+    </span>
 </div>

@@ -1,0 +1,156 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    padding-top: 45px;
+    padding-bottom: 30px;
+}
+
+.input-group-addon {
+    min-width: 110px;
+    text-align: left;
+}
+
+.input-group {
+    width: 100%;
+}
+
+.btn-pair-right {
+    margin-left: 5px;
+}
+
+.btn {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.input-group-btn .btn {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.panel-heading.dark-green {
+    background-image: linear-gradient(to bottom, #6abe6a 0, #419441 100%);
+}
+
+.panel-heading.dark-green .panel-title {
+    color: #FFFFFF;
+}
+
+.subpanel .input-group {
+    max-width: 90%;
+}
+
+input.form-control.form-control-inline.ng-pristine.ng-valid {
+    max-width: 83%;
+}
+
+.form-control.sidebyside {
+    width: 33%;
+}
+
+div.white-space-pre-line {
+    white-space: pre-line;
+}
+
+table.table.table-striped.stocks-table {
+    margin-bottom: 10px;
+}
+
+table.table.table-bordered.accounts-table {
+    margin-bottom: -2px;
+}
+
+table.table.table-bordered.accounts-subtable {
+    border-top-style: hidden;
+    border-bottom: 12px;
+}
+
+table.table.table-striped {
+    margin-bottom: 10px;
+}
+
+td.ng-binding {
+    text-align: right;
+}
+
+td.left-style {
+    text-align: left;
+}
+
+.jumbotron {
+    padding-top: 10px;
+}
+
+th.stock-header {
+    background-image: linear-gradient(to bottom, #5cb85c 0, #4f844f 100%);
+    color: #FFFFFF;
+    font-weight: normal;
+}
+
+th {
+    background-image: linear-gradient(to bottom, #337ab7 0, #2e6da4 100%);
+    color: #FFFFFF;
+    font-weight: normal;
+}
+
+th.tax-header {
+    background-image: linear-gradient(to bottom, #5bc0de 0, #2aabd2 100%);
+}
+
+span.glyphicon.glyphicon-cog {
+    vertical-align: middle;
+}
+
+.table-curved {
+    border-collapse: separate;
+}
+
+.table-curved {
+    border: solid #ccc 0px;
+    border-radius: 6px;
+    border-left: 0px;
+}
+
+.table-curved td,
+.table-curved th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+
+.table-curved th {
+    border-top: none;
+}
+
+.table-curved th:first-child {
+    border-radius: 6px 0 0 0;
+}
+
+.table-curved th:last-child {
+    border-radius: 0 6px 0 0;
+}
+
+.table-curved th:only-child {
+    border-radius: 6px 6px 0 0;
+}
+
+.table-curved tr:last-child td:first-child {
+    border-radius: 0 0 0 6px;
+}
+
+.table-curved tr:last-child td:last-child {
+    border-radius: 0 0 6px 0;
+}
+
+.stock_orig {
+    background-color: #f5f5ef;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: darkgreen;
+}

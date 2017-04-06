@@ -1,14 +1,14 @@
-var Cgt = require('./models/cgt');
+var Tax = require('./models/tax');
 var Account = require('./models/account');
 var Stock = require('./models/stock');
 
-function getCgts(res) {
-    Cgt.find(function(err, cgts) {
+function getTaxs(res) {
+    Tax.find(function(err, taxs) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
-            res.send(err);
+            return res.send(err);
         }
-        res.json(cgts); // return all todos in JSON format
+        res.json(taxs); // return all taxs in JSON format
     });
 }
 
@@ -18,7 +18,7 @@ function getAccounts(res) {
         if (err) {
             res.send(err);
         }
-        res.json(accounts); // return all todos in JSON format
+        res.json(accounts); // return all accounts in JSON format
     });
 }
 
@@ -26,9 +26,11 @@ function getStocks(res) {
     Stock.find(function(err, stocks) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
+
             res.send(err);
         }
-        res.json(stocks); // return all todos in JSON format
+
+        res.json(stocks); // return all stocks in JSON format
     });
 }
 
@@ -37,31 +39,23 @@ module.exports = function(app) {
     // ACCOUNTS
     // get all accounts
     app.get('/api/accounts', function(req, res) {
-        // use mongoose to get all todos in the database
+        // use mongoose to get all accounts in the database
         getAccounts(res);
     });
-    // create cgt and send back all cgts after creation
+    // create account and send back all accounts after creation
     app.post('/api/accounts', function(req, res) {
-        // create a todo, information comes from AJAX request from Angular
+        // create a account, information comes from AJAX request from Angular
         Account.create({
             account_obj: req.body,
             done: false
         }, function(err, account) {
             if (err)
                 res.send(err);
-            // get and return all the todos after you create another
+            // get and return all the accounts after you create another
             getAccounts(res);
         });
     });
-/*
-    formatDate
- = function(x) {
-        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
-        return formattedDate;
-    };
-    */
-
-    // update a todo
+    // update a account
     app.put('/api/accounts/:account_id', function(req, res) {
         Account.findById({ _id: req.params.account_id }, function(err, account) {
             if (err) {
@@ -81,6 +75,7 @@ module.exports = function(app) {
             for (var i = 0, l = account.account_obj.length; i < l; i++) {
                 account.account_obj[i].name = toupdate[i].name;
                 account.account_obj[i].balance = toupdate[i].balance;
+                account.account_obj[i].currency = toupdate[i].currency;
                 account.account_obj[i].rules = toupdate[i].rules;
                 account.account_obj[i].startdate = toupdate[i].startdate;
                 account.account_obj[i].enddate = toupdate[i].enddate;
@@ -91,7 +86,6 @@ module.exports = function(app) {
                     res.send(err);
                 getAccounts(res);
             });
-
         });
     });
     // delete a account
@@ -106,12 +100,12 @@ module.exports = function(app) {
     });
     // delete sub account
     app.post('/api/accounts/:id/:contentId', function(req, res) {
-        var id = req.params.id; // not req.body._id
-        var contentId = req.params.contentId; // not req.body._id
+        var id = req.params.id;
+        var contentId = req.params.contentId;
         Account.findByIdAndUpdate(id, {
             $pull: {
                 account_obj: {
-                    _id: contentId //_eventId is string representation of event ID
+                    _id: contentId
                 }
             }
         }, function(err, account) {
@@ -122,7 +116,6 @@ module.exports = function(app) {
             }
         });
     });
-
     // delete a rule
     app.post('/api/accounts/delete/:id/:contentId', function(req, res) {
         var id = req.params.contentId;
@@ -151,7 +144,6 @@ module.exports = function(app) {
             });
         });
     });
-
     // add a rule
     app.put('/api/accounts/:id/:contentId', function(req, res) {
         Account.findById({ _id: req.params.id }, function(err, account) {
@@ -172,124 +164,106 @@ module.exports = function(app) {
             });
         });
     });
-    // CGTS
-    // get all cgts
-    app.get('/api/cgts', function(req, res) {
-        // use mongoose to get all todos in the database
-        getCgts(res);
+    // TAXS
+    // get all taxs
+    app.get('/api/taxs', function(req, res) {
+        // use mongoose to get all taxs in the database
+        getTaxs(res);
     });
-    // create cgt and send back all cgts after creation
-    app.post('/api/cgts', function(req, res) {
-        // create a todo, information comes from AJAX request from Angular
-        Cgt.create({
-            cgt_obj: req.body,
+    // create tax and send back all taxs after creation
+    app.post('/api/taxs', function(req, res) {
+        // create a tax, information comes from AJAX request from Angular
+        Tax.create({
+            tax_obj: req.body,
             done: false
-        }, function(err, cgt) {
+        }, function(err, tax) {
             if (err)
-                res.send(err);
-            // get and return all the todos after you create another
-            getCgts(res);
+                return res.send(err);
+            // console.log(err);
+            // get and return all the taxs after you create another
+            getTaxs(res);
         });
     });
-
-/*
-    formatDate = function(x) {
-        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
-        return formattedDate;
-    };
-    */
-
-    // update a cgt
-    app.put('/api/cgts/:cgt_id', function(req, res) {
-        Cgt.findById({ _id: req.params.cgt_id }, function(err, cgt) {
+    // update a tax
+    app.put('/api/taxs/:tax_id', function(req, res) {
+        Tax.findById({ _id: req.params.tax_id }, function(err, tax) {
             if (err) {
-                console.log('error');
                 res.send(err);
             }
             var toupdate;
-            if (req.body.cgt_obj.length === undefined) {
-                toupdate = req.body.cgt_obj.cgt_obj;
+            if (req.body.tax_obj.length === undefined) {
+                toupdate = req.body.tax_obj.tax_obj;
             } else {
-                toupdate = req.body.cgt_obj;
+                toupdate = req.body.tax_obj;
             }
-            if (cgt.cgt_obj.length < req.body.cgt_obj.length) {
-                cgt.cgt_obj.push({ rate: '', startdate: '', enddate: '' });
+            if (tax.tax_obj.length < req.body.tax_obj.length) {
+                tax.tax_obj.push({ tax_type: '', rate: '', startdate: '', enddate: '' });
             }
-            for (var i = 0, l = cgt.cgt_obj.length; i < l; i++) {
-                cgt.cgt_obj[i].rate = toupdate[i].rate;
-                cgt.cgt_obj[i].startdate = toupdate[i].startdate;
-                cgt.cgt_obj[i].enddate = toupdate[i].enddate;
-
+            for (var i = 0, l = tax.tax_obj.length; i < l; i++) {
+                tax.tax_obj[i].tax_type = toupdate[i].tax_type;
+                tax.tax_obj[i].rate = toupdate[i].rate;
+                tax.tax_obj[i].startdate = toupdate[i].startdate;
+                tax.tax_obj[i].enddate = toupdate[i].enddate;
             }
-            var test6 = new Cgt(cgt);
-            test6.save(function(err, cgt) {
-                if (err)
+            var test6 = new Tax(tax);
+            test6.save(function(err, tax) {
+                if (err) {
                     res.send(err);
-                getCgts(res);
+                }
+
+                getTaxs(res);
             });
 
         });
     });
-
-    // delete a cgt
-    app.delete('/api/cgts/:cgt_id', function(req, res) {
-        Cgt.remove({
-            _id: req.params.cgt_id
-        }, function(err, cgt) {
+    // delete a tax
+    app.delete('/api/taxs/:tax_id', function(req, res) {
+        Tax.remove({
+            _id: req.params.tax_id
+        }, function(err, tax) {
             if (err)
                 res.send(err);
-            getCgts(res);
+            getTaxs(res);
         });
     });
-    // delete sub cgt
-    app.post('/api/cgts/:id/:contentId', function(req, res) {
-        var id = req.params.id; // not req.body._id
-        var contentId = req.params.contentId; // not req.body._id
-        Cgt.findByIdAndUpdate(id, {
+    // delete sub tax
+    app.post('/api/taxs/:id/:contentId', function(req, res) {
+        var id = req.params.id;
+        var contentId = req.params.contentId;
+        Tax.findByIdAndUpdate(id, {
             $pull: {
-                cgt_obj: {
-                    _id: contentId //_eventId is string representation of event ID
+                tax_obj: {
+                    _id: contentId
                 }
             }
-        }, function(err, cgt) {
+        }, function(err, tax) {
             if (err) {
                 console.log('ERROR: ' + err);
             } else {
-                getCgts(res);
+                getTaxs(res);
             }
         });
     });
-
-
-
     // STOCKS
     // get all stocks
     app.get('/api/stocks', function(req, res) {
-        // use mongoose to get all todos in the database
+        // use mongoose to get all stocks in the database
         getStocks(res);
     });
-    // create cgt and send back all cgts after creation
+    // create stock and send back all stocks after creation
     app.post('/api/stocks', function(req, res) {
-        // create a todo, information comes from AJAX request from Angular
+        // create a stock, information comes from AJAX request from Angular
         Stock.create({
             stock_obj: req.body,
             done: false
-        }, function(err, cgt) {
+        }, function(err, stock) {
             if (err)
                 res.send(err);
-            // get and return all the todos after you create another
+            // get and return all the stocks after you create another
             getStocks(res);
         });
     });
-
-/*
-    formatDate = function(x) {
-        var formattedDate = $filter('date')(new Date(x), "yyyy-MM-dd");
-        return formattedDate;
-    };
-    */
-
-    // update a cgt
+    // update a stock
     app.put('/api/stocks/:stock_id', function(req, res) {
         Stock.findById({ _id: req.params.stock_id }, function(err, stock) {
             if (err) {
@@ -302,14 +276,18 @@ module.exports = function(app) {
             } else {
                 toupdate = req.body.stock_obj;
             }
-            if (cgt.stock_obj.length < req.body.stock_obj.length) {
-                stock.stock_obj.push({ rate: '', startdate: '', enddate: '' });
+            if (stock.stock_obj.length < req.body.stock_obj.length) {
+                stock.stock_obj.push({ ticker: '', price: '', currency: '', forex: '', amount: '', fee: '', startdate: '', enddate: '' });
             }
             for (var i = 0, l = stock.stock_obj.length; i < l; i++) {
-                stock.stock_obj[i].rate = toupdate[i].rate;
+                stock.stock_obj[i].ticker = toupdate[i].ticker;
+                stock.stock_obj[i].price = toupdate[i].price;
+                stock.stock_obj[i].currency = toupdate[i].currency;
+                stock.stock_obj[i].forex = toupdate[i].forex;
+                stock.stock_obj[i].amount = toupdate[i].amount;
+                stock.stock_obj[i].fee = toupdate[i].fee;
                 stock.stock_obj[i].startdate = toupdate[i].startdate;
                 stock.stock_obj[i].enddate = toupdate[i].enddate;
-
             }
             var test6 = new Stock(stock);
             test6.save(function(err, stock) {
@@ -317,28 +295,26 @@ module.exports = function(app) {
                     res.send(err);
                 getStocks(res);
             });
-
         });
     });
-
-    // delete a cgt
+    // delete a stock
     app.delete('/api/stocks/:stock_id', function(req, res) {
         Stock.remove({
-            _id: req.params.cgt_id
-        }, function(err, cgt) {
+            _id: req.params.stock_id
+        }, function(err, stock) {
             if (err)
                 res.send(err);
             getStocks(res);
         });
     });
-    // delete sub cgt
+    // delete sub stock
     app.post('/api/stocks/:id/:contentId', function(req, res) {
-        var id = req.params.id; // not req.body._id
-        var contentId = req.params.contentId; // not req.body._id
+        var id = req.params.id;
+        var contentId = req.params.contentId;
         Stock.findByIdAndUpdate(id, {
             $pull: {
                 stock_obj: {
-                    _id: contentId //_eventId is string representation of event ID
+                    _id: contentId
                 }
             }
         }, function(err, stock) {
@@ -349,7 +325,6 @@ module.exports = function(app) {
             }
         });
     });
-
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
         res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)

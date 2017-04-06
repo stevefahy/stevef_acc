@@ -2,16 +2,21 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var stockSchema = new Schema({
-    /*
-    cgt_obj: [{
-        rate: Number,
+
+    stock_obj: [{
+        ticker: String,
+        price: Number,
+        currency: String,
+        forex: Number,
+        amount: Number,
+        fee: Number,
         startdate: Date,
         enddate: Date
     }],
-    */
+
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
-    
+
 });
 
 stockSchema.pre('save', function(next) {
