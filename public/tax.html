@@ -96,41 +96,39 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-    <span ng-if="$last">
-    <a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
-        <span class="glyphicon glyphicon-cog"></span> Create Tax
-    </a>
-    <div class="panel panel-info" ng-show="showCreateAccount">
-        <div class="panel-heading">
-            <h4 class="panel-title">Tax create</h4>
-        </div>
-        <div class="panel-body">
-            <form class="form-horizontal">
-                <div class="input-group">
-                    <div class="input-group">
-                        <span class="input-group-addon">Type</span>
-                        <input class="form-control" type="text" ng-model="tax_obj.tax_type">
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">Rate</span>
-                        <input class="form-control" type="text" ng-model="tax_obj.rate">
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">Start Date</span>
-                        <input class="form-control" type="date" ng-model="tax_obj.startdate">
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">End Date</span>
-                        <input class="form-control" type="date" ng-model="tax_obj.enddate">
-                    </div>
-                    <button type="submit" class="btn btn-success" ng-click="createTax()">Create</button>
-                </div>
-            </form>
-        </div>
     </div>
-    </span>
+    </td>
+    </tr>
+    </table>
+</div>
+<a href="#" class="btn btn-info btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+    <span class="glyphicon glyphicon-cog"></span> Create Tax
+</a>
+<div class="panel panel-info" ng-show="showCreateAccount">
+    <div class="panel-heading">
+        <h4 class="panel-title">Tax create</h4>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="input-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Type</span>
+                    <input class="form-control" type="text" ng-model="tax_obj.tax_type">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Rate</span>
+                    <input class="form-control" type="text" ng-model="tax_obj.rate">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Start Date</span>
+                    <input class="form-control" type="date" ng-model="tax_obj.startdate">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">End Date</span>
+                    <input class="form-control" type="date" ng-model="tax_obj.enddate">
+                </div>
+                <button type="submit" class="btn btn-success" ng-click="createTax()">Create</button>
+            </div>
+        </form>
+    </div>
 </div>
