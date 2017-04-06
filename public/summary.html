@@ -39,9 +39,11 @@
     <table class="table table-striped stocks-table">
         <tr>
             <td>
-                <h4>Total balance to date:</h4></td>
-            <td>
-                <h4>{{summary.account_balance_total + summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) + summary.current_stocks_gain_total | currency : '€'}}</h4></td>
+                <h4>Total balance to date:</h4>
+            </td>
+            <td class="right-style">
+                <h4>{{summary.account_balance_total + summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) + summary.current_stocks_gain_total | currency : '€'}}</h4>
+            </td>
         </tr>
     </table>
 </div>

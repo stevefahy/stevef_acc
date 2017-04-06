@@ -74,11 +74,16 @@ table.table.table-striped {
 td.ng-binding {
     text-align: right;
 }
+h4.ng-binding {
+    text-align: right;
+}
 
 td.left-style {
     text-align: left;
 }
-
+td.right-style {
+    text-align: right;
+}
 .jumbotron {
     padding-top: 10px;
 }
