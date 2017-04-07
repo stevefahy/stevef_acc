@@ -1,0 +1,47 @@
+<a href="#" class="btn btn-success btn-sm" ng-click="showCreateAccount = !showCreateAccount">
+    <span class="glyphicon glyphicon-cog"></span> Create Stock
+</a>
+<div class="panel panel-success" ng-show="showCreateAccount">
+    <div class="panel-heading">
+        <h4 class="panel-title">Stock create</h4>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="input-group">
+                <div class="input-group">
+                    <span class="input-group-addon">Ticker</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.ticker">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Price</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.price">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Currency</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.currency">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">FX</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.forex">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Amount</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.amount">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Fee</span>
+                    <input class="form-control" type="text" ng-model="stock_obj.fee">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">Start Date</span>
+                    <input class="form-control" type="date" ng-model="stock_obj.startdate">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">End Date</span>
+                    <input class="form-control" type="date" ng-model="stock_obj.enddate">
+                </div>
+                <button type="submit" class="btn btn-success" ng-click="createStock()">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
