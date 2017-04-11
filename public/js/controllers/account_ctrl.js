@@ -17,6 +17,10 @@ var accountController = angular.module('accountController', [])
             enddate: $filter("date")(Date.now(), 'yyyy-MM-dd')
         };
 
+        $scope.$on("dateChanged", function(event) {
+            calulateInterest();
+        });
+
         // GET =====================================================================
         // when landing on the page, get all accounts and show them
         // use the service to get all the accounts
@@ -27,7 +31,7 @@ var accountController = angular.module('accountController', [])
                 calulateInterest();
             });
         addBalanceTotal = function(r, a) {
-            summary.account_balance_total += a / r.Rate;
+            summary.account_balance_total += a / r;
         };
         calulateInterest = function() {
             var a = summary.categorizeValues($scope.accounts, 'accounts');
@@ -131,7 +135,7 @@ var accountController = angular.module('accountController', [])
             }
         };
         // DELETE ==================================================================
-        // delete a todo after checking it
+        // delete a account after checking it
         $scope.deleteAccount = function(id) {
             $scope.loading = true;
             Accounts.delete(id)

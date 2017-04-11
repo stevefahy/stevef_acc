@@ -4,7 +4,7 @@ var taxConroller = angular.module('taxController', [])
         $scope.summary = summary;
         var s = summary;
         $scope.showSection = false;
-        var today = new Date();
+        var today = summary.set_date;
         var year = new Date().getFullYear();
         var start_date;
         var history = false;
@@ -48,6 +48,9 @@ var taxConroller = angular.module('taxController', [])
                 $scope.taxCalc.tx_tax_type[index] = '';
                 $scope.taxCalc.tx_rate[index] = 0;
                 angular.forEach(value.tax_obj, function(value2, index2) {
+                    // Use this loop to format hte date so that it will display in the HTML5 input type date picker
+                    value2.startdate = $filter('date')(new Date(value2.startdate), "yyyy-MM-dd");
+                    value2.enddate = $filter('date')(new Date(value2.enddate), "yyyy-MM-dd");
                     // starts before today
                     if (s.elapsedDays(today, value2.startdate) + 1 > 0) {
                         // ends before today

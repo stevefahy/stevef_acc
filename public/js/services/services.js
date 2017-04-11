@@ -1,3 +1,26 @@
+angular.module('historyService', [])
+    // each function returns a promise object 
+    .factory('Historys', ['$http', function($http) {
+        return {
+            get: function() {
+                return $http.get('/api/historys');
+            },
+            create: function(historyData) {
+                return $http.post('/api/historys', historyData);
+            },
+            delete: function(id) {
+                return $http.delete('/api/historys/' + id);
+            },
+            update: function(pms) {
+                var theurl = '/api/historys/' + pms.id;
+                return $http.put(theurl, pms);
+            },
+            deleteContent: function(id, contentId) {
+                return $http.post('/api/historys/' + id + '/' + contentId);
+            }
+        };
+    }]);
+
 angular.module('taxService', [])
     // each function returns a promise object 
     .factory('Taxs', ['$http', function($http) {
@@ -53,7 +76,7 @@ angular.module('accountService', [])
     }]);
 
 angular.module('accountPageService', [])
-    .factory('summary', ['$filter', 'getData', '$q', function($filter, getData, $q) {
+    .factory('summary', ['$filter', 'getData', '$q', 'dateFilter', function($filter, getData, $q, dateFilter) {
         summary = this;
         var summary = {
             'account_interest_total': Number,
@@ -64,7 +87,8 @@ angular.module('accountPageService', [])
             'current_stocks_fx': [],
             'current_stocks_calculated': [],
             'account_balance_total': Number,
-            'current_stocks_gain_total': Number
+            'current_stocks_gain_total': Number,
+            'set_date': Date
         };
 
         elapsedDays = function(d1, d2) {
@@ -75,14 +99,40 @@ angular.module('accountPageService', [])
             var result = Math.floor(diff / (1000 * 60 * 60 * 24));
             return result;
         };
-
         return {
             // FX
             getFXSingle: function(currencies, amount) {
                 var api = getData.getFX(currencies);
                 var data = api.get({ symbol: currencies }, function() {
-                    var rate = data.query.results.rate;
+                    var rate = data.query.results.rate.Rate;
                     addBalanceTotal(rate, amount);
+                });
+            },
+            // FX HISTORY
+            getFXSingleHistory: function(currency, amount, date) {
+                // The YQL FX historical data API can only be checked against USD as the base currency
+                // In order to check other currency rates both rates must be retrieved (against USD) 
+                // and then divided by each other to get their rate against each other.
+                // By default get the EUR/USD rate which required to get all currencies against EUR
+                var api1 = getData.getFXhistory('EUR', date);
+                var data1 = api1.get({ symbol: 'EUR' }, function() {
+                    // Check that a valid value is returned
+                    if (data1.query.results !== null) {
+                        var rate1 = (1 / data1.query.results.quote.Adj_Close);
+                        // If the currency rate required is not USD then get that currency against USD
+                        if (currency != 'USD') {
+                            var api2 = getData.getFXhistory(currency, date);
+                            var data2 = api2.get({ symbol: currency }, function() {
+                                var rate2 = (1 / data2.query.results.quote.Adj_Close);
+                                addBalanceTotal
+(rate1 / rate2, amount);
+                            });
+                        } else {
+                            addBalanceTotal(rate1, amount);
+                        }
+                    } else {
+                        console.log('no currency for this date');
+                    }
                 });
             },
             elapsedDays: function(d1, d2) {
@@ -98,7 +148,8 @@ angular.module('accountPageService', [])
                 return y;
             },
             calculateInterest: function(acc) {
-                var today = new Date();
+                //var today = new Date();
+                var today = this.set_date;
                 var daystocalc = 0;
                 var interest_accrued = 0;
                 var interest_accrued_todate = 0;
@@ -113,7 +164,7 @@ angular.module('accountPageService', [])
                         // ends before today
                         if (this.elapsedDays(today, end) > 0) {
                             // check if the period is within this year
-                            daystocalc = this.elapsedDays(end, start) + 1;
+                            daystocalc = this.elapsedDays(end, start) + .78;
                         } else {
                             // ends after today
                             daystocalc = this.elapsedDays(today, start);
@@ -142,7 +193,7 @@ angular.module('accountPageService', [])
                 return interest_accrued_todate;
             },
             categorizeValues: function(list, name) {
-                var today = new Date();
+                var today = this.set_date;
                 var year = new Date().getFullYear();
                 var start_date = new Date(year, 0, 01);
                 var object = name.substring(0, name.length - 1) + '_obj';
@@ -158,6 +209,9 @@ angular.module('accountPageService', [])
                     summary[current][index] = [];
                     summary[future][index] = [];
                     angular.forEach(value[object], function(value2, index2) {
+                        // Use this loop to format hte date so that it will display in the HTML5 input type date picker
+                        value2.startdate = $filter('date')(new Date(value2.startdate), "yyyy-MM-dd");
+                        value2.enddate = $filter('date')(new Date(value2.enddate), "yyyy-MM-dd");
                         var new_object = JSON.parse(JSON.stringify(value2));
                         if (new Date(new_object.startdate).getFullYear() < year && new Date(new_object.enddate).getFullYear() < year) {
                             // start and end previous year
@@ -244,7 +298,11 @@ angular.module('accountPageService', [])
                 var maxT = acc[acc.length - 1];
                 //var minT = acc[0];
                 if (maxT.currency) {
-                    this.getFXSingle('EUR' + maxT.currency, maxT.balance);
+                    if ((new Date(this.set_date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0))) {
+                        this.getFXSingle('EUR' + maxT.currency, maxT.balance);
+                    } else {
+                        this.getFXSingleHistory(maxT.currency, maxT.balance, this.set_date);
+                    }
                 } else {
                     balance_total = Number(maxT.balance);
                 }

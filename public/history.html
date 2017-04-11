@@ -1,0 +1,62 @@
+<div ng-controller="historyController">
+    <button type="button" class="btn btn-warning btn-block" ng-click="showSection = !showSection">HISTORY</button>
+    <div ng-show="showSection">
+        <table class="table table-striped">
+            <tr>
+                <td>Date</td>
+                <td>Balance</td>
+                <td>Taxed</td>
+                <td class="right-style">TOTAL</td>
+            </tr>
+        </table>
+        <div ng-repeat="history in historys">
+            <div ng-repeat="i in history.history_obj">
+                <table class="table table-striped">
+                    <tr>
+                        <td class="left-style">{{i.date | date : "dd.MM.yy"}}</td>
+                        <td>{{i.balance | currency : '€'}}</td>
+                        <td>{{i.taxed | currency : '€'}}</td>
+                        <td class="right-style">{{i.total | currency : '€'}}</td>
+                    </tr>
+                </table>
+                <table class="table table-striped">
+                    <tr>
+                        <td class="left-style">{{summary.set_date | date : "dd.MM.yy"}}</td>
+                        <td ng-class="(summary.account_balance_total - i.balance)<0 ? 'red' : 'green'">€{{summary.account_balance_total - i.balance | number : 2 }}</td>
+                        <td ng-class="(summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) - i.taxed)<0 ? 'red' : 'green'">€{{summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) - i.taxed | number : 2}}</td>
+                        <td ng-class="(summary.account_balance_total + summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) + summary.current_stocks_gain_total - i.total)<0 ? 'red' : 'green'" class="right-style">€{{summary.account_balance_total + summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest_total) + summary.current_stocks_gain_total - i.total | number : 2}}</td>
+                    </tr>
+                </table>
+                <div ng-repeat="j in i.stocksgain">
+                    <div ng-click="showHistory = !showHistory">
+                        <table class="table table-striped">
+                            <tr class="stock-historic">
+                                <td class="left-style" width="60%">{{j.ticker}} after tax & fees:</td>
+                                <td width="20%" ng-class="(j.percent_gain)<0 ? 'red' : 'green'">{{j.percent_gain | number : 2}}%</td>
+                                <td width="20%" ng-class="(j.percent_gain)<0 ? 'red' : 'green'">€{{j.gain | number : 2}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table class="table table-striped stocks-table" ng-show="showHistory">
+                        <tr>
+                            <td>Original value:</td>
+                            <td class="align-right">{{j.original_value | currency : '€'}}</td>
+                        </tr>
+                        <tr>
+                            <td>New value:</td>
+                            <td class="align-right">{{j.original_value+j.gain | currency : '€'}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-danger" ng-click="deleteHistory(history._id)">Delete</button>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">Start Date</span>
+            <input class="form-control form-control-inline" id="'datePicker" type="date" ng-model="dateString">
+        </div>
+        <a href="#" class="btn btn-warning btn-sm" ng-click="addHistory()">
+            <span class="glyphicon glyphicon-cog"></span> Add history
+        </a>
+    </div>
+</div>

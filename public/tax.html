@@ -1,4 +1,5 @@
-<div ng-controller="taxController">
+<di
+v ng-controller="taxController">
     <button type="button" class="btn btn-info btn-block" ng-click="showSection = !showSection">TAX</button>
     <!-- LOOP OVER THE TAXS -->
     <div ng-repeat="tax in taxs" ng-show="showSection">
@@ -41,15 +42,7 @@
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">Start Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.startdate)}} disabled>
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Start Date</span>
                                             <input class="form-control" type="date" ng-model="i.startdate">
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">End Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.enddate)}} disabled>
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">End Date</span>

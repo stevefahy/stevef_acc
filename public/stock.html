@@ -126,15 +126,7 @@
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">Start Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.startdate)}} disabled>
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Start Date</span>
                                             <input class="form-control" type="date" ng-model="i.startdate">
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">End Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.enddate)}} disabled>
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">End Date</span>
@@ -144,7 +136,8 @@
                                             <button type="submit" class="btn btn-sm btn-warning" ng-click="deleteContent(stock._id,i._id)">Delete</button>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-danger" ng-click="deleteStock(stock._id)">Delete</button>
+                                    <button type="submit" class="btn btn-danger" ng-click="deleteStock
+(stock._id)">Delete</button>
                                     <button type="submit" class="btn btn-success btn-pair-right" ng-click="updateStock(stock._id, stock)">Update</button>
                                 </div>
                             </form>

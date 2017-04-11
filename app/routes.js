@@ -1,6 +1,7 @@
 var Tax = require('./models/tax');
 var Account = require('./models/account');
 var Stock = require('./models/stock');
+var History = require('./models/history');
 
 function getTaxs(res) {
     Tax.find(function(err, taxs) {
@@ -26,11 +27,19 @@ function getStocks(res) {
     Stock.find(function(err, stocks) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
-
             res.send(err);
         }
-
         res.json(stocks); // return all stocks in JSON format
+    });
+}
+
+function getHistorys(res) {
+    History.find(function(err, historys) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err) {
+            res.send(err);
+        }
+        res.json(historys); // return all historys in JSON format
     });
 }
 
@@ -179,7 +188,6 @@ module.exports = function(app) {
         }, function(err, tax) {
             if (err)
                 return res.send(err);
-            // console.log(err);
             // get and return all the taxs after you create another
             getTaxs(res);
         });
@@ -267,7 +275,6 @@ module.exports = function(app) {
     app.put('/api/stocks/:stock_id', function(req, res) {
         Stock.findById({ _id: req.params.stock_id }, function(err, stock) {
             if (err) {
-                console.log('error');
                 res.send(err);
             }
             var toupdate;
@@ -323,6 +330,132 @@ module.exports = function(app) {
             } else {
                 getStocks(res);
             }
+        });
+    });
+    // HISTORYS
+    // get all historys
+    app.get('/api/historys', function(req, res) {
+        // use mongoose to get all historys in the database
+        getHistorys(res);
+    });
+    // create history and send back all historys after creation
+    app.post('/api/historys', function(req, res) {
+        // create a history, information comes from AJAX request from Angular
+        History.create({
+            history_obj: req.body,
+            done: false
+        }, function(err, history) {
+            if (err)
+                res.send(err);
+            // get and return all the historys after you create another
+            getHistorys(res);
+        });
+    });
+    // update a history
+    app.put('/api/historys/:history_id', function(req, res) {
+        History.findById({ _id: req.params.history_id }, function(err, history) {
+            if (err) {
+                console.log('error');
+                res.send(err);
+            }
+            var toupdate;
+            if (req.body.history_obj.length === undefined) {
+                toupdate = req.body.history_obj.history_obj;
+            } else {
+                toupdate = req.body.history_obj;
+            }
+            if (history.history_obj.length < req.body.history_obj.length) {
+
+                history.history_obj.push({ name: '', balance: '', rules: '', date: '' });
+            }
+            for (var i = 0, l = history.history_obj.length; i < l; i++) {
+                history.history_obj[i].name = toupdate[i].name;
+                history.history_obj[i].balance = toupdate[i].balance;
+                history.history_obj[i].currency = toupdate[i].currency;
+                history.history_obj[i].rules = toupdate[i].rules;
+                history.history_obj[i].startdate = toupdate[i].startdate;
+                history.history_obj[i].enddate = toupdate[i].enddate;
+            }
+            var test4 = new History(history);
+            test4.save(function(err, history) {
+                if (err)
+                    res.send(err);
+                getHistorys(res);
+            });
+        });
+    });
+    // delete a history
+    app.delete('/api/historys/:history_id', function(req, res) {
+        History.remove({
+            _id: req.params.history_id
+        }, function(err, history) {
+            if (err)
+                res.send(err);
+            getHistorys(res);
+        });
+    });
+    // delete sub history
+    app.post('/api/historys/:id/:contentId', function(req, res) {
+        var id = req.params.id;
+        var contentId = req.params.contentId;
+        History.findByIdAndUpdate(id, {
+            $pull: {
+                history_obj: {
+                    _id: contentId
+                }
+            }
+        }, function(err, history) {
+            if (err) {
+                console.log('ERROR: ' + err);
+            } else {
+                getHistorys(res);
+            }
+        });
+    });
+    // delete a rule
+    app.post('/api/historys/delete/:id/:contentId', function(req, res) {
+        var id = req.params.contentId;
+        var contentId = req.body.ruleId;
+        History.findById({ _id: req.params.id }, function(err, history) {
+            if (err) {
+                res.send(err);
+            }
+            var toRemove;
+            for (var i = 0, l = history.history_obj.length; i < l; i++) {
+                if (history.history_obj[i]._id == req.params.contentId) {
+                    for (var t = 0, l2 = history.history_obj[i].rules.length; t < l2; t++) {
+                        if (history.history_obj[i].rules[t]._id == contentId) {
+                            toRemove = history.history_obj[i].rules[t];
+                        }
+                    }
+                    toRemove.remove();
+                }
+            }
+            var test4 = new History(history);
+            test4.save(function(err, history) {
+                if (err)
+                    res.send(err);
+                getHistorys(res);
+            });
+        });
+    });
+    // add a rule
+    app.put('/api/historys/:id/:contentId', function(req, res) {
+        History.findById({ _id: req.params.id }, function(err, history) {
+            if (err) {
+                res.send(err);
+            }
+            for (var i = 0, l = history.history_obj.length; i < l; i++) {
+                if (history.history_obj[i]._id == req.params.contentId) {
+                    history.history_obj[i].rules.push(req.body.rule);
+                }
+            }
+            var test4 = new History(history);
+            test4.save(function(err, history) {
+                if (err)
+                    res.send(err);
+                getHistorys(res);
+            });
         });
     });
     // application -------------------------------------------------------------

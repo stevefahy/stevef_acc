@@ -11,7 +11,7 @@
         </thead>
         <tr>
         <td> Balance</td>
-        <td>{{summary.getSymbol(i.currency)}}{{i.balance}}</td>
+        <td>{{summary.getSymbol(i.currency)}}{{i.balance | number : 2}}</td>
         </tr>
         <tr ng-if="i.currency">
         <td>Currency</td> 
@@ -25,7 +25,11 @@
         </tr>
         <tr>
             <td>Total interest to date</td>
-            <td>{{summary.account_interest[$parent.$index] | number : 2}}</td>
+            <td>{{summary.getSymbol(i.currency)}}{{summary.account_interest[$parent.$index] | number : 2}}</td>
+        </tr>
+        <tr>
+            <td>Total interest to date after tax</td>
+            <td>{{summary.getSymbol(i.currency)}}{{summary.calculateTAX(summary.tax_rate_DIRT,summary.account_interest[$parent.$index]) | number : 2}}</td>
         </tr>
         </table>
         </span>
@@ -75,15 +79,7 @@
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">Start Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.startdate)}} disabled>
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Start Date</span>
                                             <input class="form-control" type="date" ng-model="i.startdate">
-                                        </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">End Date</span>
-                                            <input class="form-control" id="disabledInput" type="text" value={{summary.formatDate(i.enddate)}} disabled>
                                         </div>
                                         <div class="input-group">
                                             <span class="input-group-addon">End Date</span>
