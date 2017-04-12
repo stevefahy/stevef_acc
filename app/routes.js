@@ -43,7 +43,7 @@ function getHistorys(res) {
     });
 }
 
-module.exports = function(app) {
+module.exports = function(app, passport) {
     // api ---------------------------------------------------------------------
     // ACCOUNTS
     // get all accounts
@@ -459,7 +459,66 @@ module.exports = function(app) {
         });
     });
     // application -------------------------------------------------------------
-    app.get('*', function(req, res) {
-        res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    /*
+    app.get('/', function(req, res) {
+       // res.redirect('index.html');
+        //res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
+    */
+    // normal routes ===============================================================
+
+    // show the home page (will also have our login links)
+    app.get('/', function(req, res) {
+        res.render('index.ejs');
+    });
+
+    // PROFILE SECTION =========================
+    app.get('/profile', isLoggedIn, function(req, res) {
+        //res.render('profile.ejs', {
+        res.render('app.ejs', {
+            user : req.user
+        });
+    });
+
+    // LOGOUT ==============================
+    app.get('/logout', function(req, res) {
+        req.logout();
+        res.redirect('/');
+    });
+
+    // =============================================================================
+    // AUTHENTICATE (FIRST LOGIN) ==================================================
+    // =============================================================================
+    // google ---------------------------------
+    // send to google to do the authentication
+    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+    // the callback after google has authenticated the user
+    app.get('/auth/google/callback',
+        passport.authenticate('google', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+    }));
+
+    // =============================================================================
+    // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
+    // =============================================================================
+    // google ---------------------------------
+
+    // send to google to do the authentication
+    app.get('/connect/google', passport.authorize('google', { scope : ['profile', 'email'] }));
+
+    // the callback after google has authorized the user
+    app.get('/connect/google/callback',
+        passport.authorize('google', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+    }));
 };
+
+// route middleware to ensure user is logged in
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+
+    res.redirect('/');
+}

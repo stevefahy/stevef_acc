@@ -162,3 +162,7 @@ span.glyphicon.glyphicon-cog {
 .green {
     color: darkgreen;
 }
+
+.g-signin2 {
+    margin-top: 60px;
+}

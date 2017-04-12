@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="accountPage">
+
+<head>
+    <!-- META -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Optimize mobile viewport -->
+    <title>Account</title>
+    <!-- SCROLLS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- load bootstrap -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <!-- Local styles -->
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <!-- Angular Material -->
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand">Acc</a>
+            </div>
+        </div>
+    </nav>
+    <div ng-app="accountPage">
+        <div class="container theme-showcase" role="main">
+            <!-- Include templates -->
+            <div ng-include src="'summary.html'"></div>
+            <div ng-include src="'history.html'"></div>
+            <div ng-include src="'account.html'"></div>
+            <div ng-include src="'stock.html'"></div>
+            <div ng-include src="'tax.html'"></div>
+            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        </div>
+    </div>
+    <!-- Angular -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular-resource.min.js"></script>
+    <!-- load Controllers -->
+    <script src="js/controllers/main_ctrl.js"></script>
+    <script src="js/controllers/tax_ctrl.js"></script>
+    <script src="js/controllers/account_ctrl.js"></script>
+    <script src="js/controllers/stock_ctrl.js"></script>
+    <script src="js/controllers/history_ctrl.js"></script>
+    <!-- load Services -->
+    <script src="js/services/services.js"></script>
+    <!-- load our main application -->
+    <script src="js/core.js"></script>
+</body>
+
+</html>
