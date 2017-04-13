@@ -12,6 +12,7 @@ var flash = require('connect-flash');
 var session = require('express-session');
 
 // configuration ===============================================================
+// Check for local or production environment
 var os = require('os');
 var interfaces = os.networkInterfaces();
 var addresses = [];
@@ -24,9 +25,14 @@ for (var k in interfaces) {
     }
 }
 if (addresses == '192.168.192.54') {
+     environ = 'local';
     var dburl = database.localUrl;
+    var callbackURL = 'http://localhost:8080/auth/google/callback';
+    
 } else {
+     environ = 'remote';
     var dburl = database.remoteUrl;
+    var callbackURL = 'https://stevef.herokuapp.com/auth/google/callback';
 }
 mongoose.connect(dburl); // Connect to local MongoDB instance. A remoteUrl is also available (modulus.io)
 

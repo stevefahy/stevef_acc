@@ -7,7 +7,12 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // load up the user model
 var User       		= require('../app/models/user');
-
+console.log('environ:' + environ);
+if(environ === 'local'){
+    callbackURL = 'http://localhost:8080/auth/google/callback';
+} else {
+    callbackURL = 'https://stevef.herokuapp.com/auth/google/callback';
+}
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
 
@@ -39,7 +44,8 @@ module.exports = function(passport) {
 
         clientID        : configAuth.googleAuth.clientID,
         clientSecret    : configAuth.googleAuth.clientSecret,
-        callbackURL     : configAuth.googleAuth.callbackURL,
+        callbackURL     : callbackURL,
+        //callbackURL     : configAuth.googleAuth.callbackURL,
         passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
     },
