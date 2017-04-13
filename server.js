@@ -25,14 +25,16 @@ for (var k in interfaces) {
     }
 }
 if (addresses == '192.168.192.54') {
-     environ = 'local';
+    // MongoDB
     var dburl = database.localUrl;
-    var callbackURL = 'http://localhost:8080/auth/google/callback';
+    // Google Auth callBackURL
+    global.callbackURL = 'http://localhost:8080/auth/google/callback';
     
 } else {
-     environ = 'remote';
+    // MongoDB
     var dburl = database.remoteUrl;
-    var callbackURL = 'https://stevef.herokuapp.com/auth/google/callback';
+    // Google Auth callBackURL
+    global.callbackURL = 'https://stevef.herokuapp.com/auth/google/callback';
 }
 mongoose.connect(dburl); // Connect to local MongoDB instance. A remoteUrl is also available (modulus.io)
 
